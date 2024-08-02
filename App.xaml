@@ -6,8 +6,9 @@
     xmlns:prism="http://prismlibrary.com/">
     <Application.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="DarkBackgroud" Color="#FF1C1C1C" />
+            <SolidColorBrush x:Key="LightBackgroud" Color="#FFFFFFFF" />
             <ResourceDictionary.MergedDictionaries>
-
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
             </ResourceDictionary.MergedDictionaries>

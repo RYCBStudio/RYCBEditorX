@@ -7,12 +7,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\Fonts\iconfont.ttf" />
+    <None Remove="Assets\Icons\newfile.png" />
     <None Remove="Assets\IDE_splash.png" />
     <None Remove="Views\Icon-Ver3.256x.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="171.30.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
     <PackageReference Include="System.Management" Version="8.0.0" />
@@ -29,6 +31,7 @@
   <ItemGroup>
     <Resource Include="Assets\Fonts\iconfont.ttf" />
     <Resource Include="Assets\Icon-Ver3.256x.png" />
+    <Resource Include="Assets\Icons\newfile.png" />
     <Resource Include="Assets\IDE_splash.png" />
   </ItemGroup>
   <ItemGroup>

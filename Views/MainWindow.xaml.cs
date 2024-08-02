@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Windows;
 using System.Windows.Media;
@@ -33,6 +34,14 @@ public partial class MainWindow : Window
         Instance = this;
         Tabs = [];
         NotificationsList.ItemsSource = Notifications;
+        if (GlobalConfig.Skin == "dark")
+        {
+            MainGrid.Background = (Brush)Application.Current.Resources["DarkBackgroud"];
+        }
+        else
+        {
+            MainGrid.Background = (Brush)Application.Current.Resources["LightBackgroud"];
+        }
         //MainTabCtrl.ItemsSource = texts;
         //FluentMessageBox.Theme = "Error";
         //new FluentMessageBox()

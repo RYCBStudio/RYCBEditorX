@@ -8,6 +8,8 @@ using RYCBEditorX.Views;
 using RYCBEditorX.Utils;
 using RYCBEditorX.Dialogs.Views;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
+using Microsoft.TeamFoundation.Common;
 
 namespace RYCBEditorX;
 /// <summary>
@@ -17,9 +19,9 @@ public partial class App : PrismApplication
 {
     private Splash Splash;
 
-    internal static readonly string STARTUP_PATH = System.Windows.Forms.Application.StartupPath;
+    internal static string STARTUP_PATH { get; private set; } = System.Windows.Forms.Application.StartupPath;
 
-    internal static Utils.LogUtil LOGGER
+    internal static LogUtil LOGGER
     {
         get; private set;
     }
@@ -47,12 +49,72 @@ public partial class App : PrismApplication
         base.Initialize();
     }
 
+    private void UpdataResourceDictionary(string resourceStr, int pos)
+    {
+        if (pos < 0 || pos > 2)
+        {
+            return;
+        }
+        var resource = new ResourceDictionary
+        {
+            Source = new Uri(resourceStr)
+        };
+        Resources.MergedDictionaries.RemoveAt(pos);
+        Resources.MergedDictionaries.Insert(pos, resource);
+    }
+
+    private void LoadConfig()
+    {
+        LOGGER.Log("载入配置项...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
+        AppConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        AppSettings = AppConfiguration.AppSettings;
+        GlobalConfig.XshdFilePath = AppSettings.Settings["XshdFilePath"].Value;
+        if (GlobalConfig.XshdFilePath.IsNullOrEmpty())
+        {
+            AppSettings.Settings["XshdFilePath"].Value = STARTUP_PATH+"\\Highlightings";
+            AppConfiguration.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+            GlobalConfig.XshdFilePath = AppSettings.Settings["XshdFilePath"].Value;
+        }
+
+        LOGGER.Log("载入程序主题与颜色", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
+        var skin = AppSettings.Settings["Skin"].Value;
+        GlobalConfig.Skin = skin;
+        UpdataResourceDictionary(GlobalConfig.GetSkin(skin), 0);
+
+        LOGGER.Log("载入编辑器配置项", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
+        GlobalConfig.Editor.ShowLineNumber = bool.Parse(AppSettings.Settings["Editor.ShowLineNum"].Value);
+        GlobalConfig.Editor.FontFamilyName = AppSettings.Settings["Editor.FontName"].Value;
+        GlobalConfig.Editor.FontSize = Convert.ToInt32(AppSettings.Settings["Editor.FontSize"].Value);
+    }
+
+    #region Prism Application
     protected override void OnInitialized()
     {
         Splash.Close();
         base.OnInitialized();
     }
 
+    protected override Window CreateShell()
+    {
+        return Container.Resolve<MainWindow>();
+    }
+
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    {
+
+    }
+
+    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+    {
+        LOGGER.Log("加载 Dialog 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
+        moduleCatalog.AddModule<Dialogs.DialogsModule>();
+        LOGGER.Log("加载 Utils 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
+        moduleCatalog.AddModule<UtilsModule>();
+        base.ConfigureModuleCatalog(moduleCatalog);
+    }
+    #endregion
+    #region 异常处理
     private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
@@ -94,36 +156,5 @@ public partial class App : PrismApplication
             LOGGER.Log("处理成功。", module: EnumLogModule.CUSTOM, customModuleName: "异常处理");
         }
     }
-
-    private static void LoadConfig()
-    {
-        LOGGER.Log("载入配置项...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
-        AppConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-        AppSettings = AppConfiguration.AppSettings;
-
-        LOGGER.Log("载入编辑器配置项", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
-        GlobalConfig.Editor.ShowLineNumber = bool.Parse(AppSettings.Settings["Editor.ShowLineNum"].Value);
-        GlobalConfig.Editor.FontFamilyName = AppSettings.Settings["Editor.FontName"].Value;
-        GlobalConfig.Editor.FontSize = Convert.ToInt32(AppSettings.Settings["Editor.FontSize"].Value);
-    }
-
-
-    protected override Window CreateShell()
-    {
-        return Container.Resolve<MainWindow>();
-    }
-
-    protected override void RegisterTypes(IContainerRegistry containerRegistry)
-    {
-
-    }
-
-    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
-    {
-        LOGGER.Log("加载 Dialog 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
-        moduleCatalog.AddModule<Dialogs.DialogsModule>();
-        LOGGER.Log("加载 Utils 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
-        moduleCatalog.AddModule<UtilsModule>();
-        base.ConfigureModuleCatalog(moduleCatalog);
-    }
+    #endregion
 }

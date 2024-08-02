@@ -56,8 +56,28 @@
             Key="S"
             Command="{Binding SaveFileCmd}"
             Modifiers="Ctrl" />
+        <KeyBinding
+            Key="X"
+            Command="{Binding EditingCmd}"
+            Modifiers="Ctrl" />
+        <KeyBinding
+            Key="C"
+            Command="{Binding EditingCmd}"
+            Modifiers="Ctrl" />
+        <KeyBinding
+            Key="V"
+            Command="{Binding EditingCmd}"
+            Modifiers="Ctrl" />
+        <KeyBinding
+            Key="C"
+            Command="{Binding EditingCmd}"
+            Modifiers="Ctrl+Shift" />
+        <KeyBinding
+            Key="U"
+            Command="{Binding EditingCmd}"
+            Modifiers="Ctrl+Shift" />
     </Window.InputBindings>
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="2*" />
@@ -68,7 +88,7 @@
             <ColumnDefinition Width="9.6*" />
             <ColumnDefinition Width="0.4*" />
         </Grid.ColumnDefinitions>
-        <Menu Grid.ColumnSpan="2">
+        <Menu x:Name="MainMenu" Grid.ColumnSpan="2">
             <MenuItem FontSize="12" Header="_File">
                 <MenuItem Header="New">
                     <MenuItem.Icon>
@@ -125,7 +145,10 @@
                 <MenuItem Header="_Save As" />
             </MenuItem>
             <MenuItem FontSize="12" Header="_Edit">
-                <MenuItem Header="Cut" InputGestureText="Ctrl+X">
+                <MenuItem
+                    Header="Cut"
+                    InputGestureText="Ctrl+X"
+                    Tag="Cut">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -133,7 +156,10 @@
                             Text="&#xe839;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Paste" InputGestureText="Ctrl+V">
+                <MenuItem
+                    Header="Paste"
+                    InputGestureText="Ctrl+V"
+                    Tag="Paste">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -141,7 +167,10 @@
                             Text="&#xe642;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Copy" InputGestureText="Ctrl+C">
+                <MenuItem
+                    Header="Copy"
+                    InputGestureText="Ctrl+C"
+                    Tag="Copy">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -149,7 +178,10 @@
                             Text="&#xe706;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Comment Selected Lines" InputGestureText="Ctrl+Alt+C">
+                <MenuItem
+                    Header="Comment Selected Lines"
+                    InputGestureText="Ctrl+Alt+C"
+                    Tag="csl">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -157,7 +189,10 @@
                             Text="&#xed53;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Uncomment Selected Lines" InputGestureText="Ctrl+Alt+U">
+                <MenuItem
+                    Header="Uncomment Selected Lines"
+                    InputGestureText="Ctrl+Alt+U"
+                    Tag="usl">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"

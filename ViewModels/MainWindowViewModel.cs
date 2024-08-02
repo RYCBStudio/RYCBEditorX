@@ -1,26 +1,23 @@
-﻿using System.Security.Cryptography;
+﻿using System.IO;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Microsoft.SqlServer.Management.Sdk.Sfc;
 using Microsoft.TeamFoundation.Common;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using RYCBEditorX.AvalonEditEx;
 using RYCBEditorX.Views;
+using Microsoft.SqlServer.Management;
+using System;
 
 namespace RYCBEditorX.ViewModels;
 public class MainWindowViewModel : BindableBase
 {
-    private string _title = "Prism Application";
-    public string Title
-    {
-        get => _title;
-        set => SetProperty(ref _title, value);
-    }
-
     public DelegateCommand NewFileCmd
     {
         get; private set;
@@ -45,6 +42,10 @@ public class MainWindowViewModel : BindableBase
     {
         get; private set;
     }
+    public DelegateCommand EditingCmd
+    {
+        get; private set;
+    }
 
     public MainWindowViewModel()
     {
@@ -54,6 +55,12 @@ public class MainWindowViewModel : BindableBase
         SaveFileCmd = new DelegateCommand(SaveFile);
         SaveAsCmd = new DelegateCommand(SaveAsFile);
         CloseTabCmd = new DelegateCommand(CloseTab);
+        EditingCmd = new DelegateCommand(Editing);
+    }
+
+    internal void Editing()
+    {
+        //TODO: 分MenuItem添加Command
     }
 
     internal void NewFile()
@@ -78,6 +85,16 @@ public class MainWindowViewModel : BindableBase
             FontFamily = new(GlobalConfig.Editor.FontFamilyName),
             FontSize = GlobalConfig.Editor.FontSize,
         };
+        if (GlobalConfig.Skin == "dark")
+        {
+            testTextEditorEx.Background = (Brush)Application.Current.Resources["DarkBackgroud"];
+            testTextEditorEx.Foreground = (Brush)Application.Current.Resources["LightBackgroud"];
+        }
+        else
+        {
+            testTextEditorEx.Foreground = (Brush)Application.Current.Resources["DarkBackgroud"];
+            testTextEditorEx.Background = (Brush)Application.Current.Resources["LightBackgroud"];
+        }
         dock.Children.Add(new TextBlock()
         {
             Text = System.IO.Path.GetFileName(filename),
@@ -99,12 +116,53 @@ public class MainWindowViewModel : BindableBase
             Uid = filename,
             Content = testTextEditorEx
         };
-        testTextEditorEx.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition(MainWindow.Instance.BtnSelectHLProfile.Content.ToString().Trim());
+        var resourceName = GlobalConfig.XshdFilePath + $"\\{GetLanguage(filename)}.xshd";
+        using (Stream s = new FileStream(resourceName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+        {
+            using System.Xml.XmlTextReader reader = new(s);
+            var xshd = HighlightingLoader.LoadXshd(reader);
+            testTextEditorEx.SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
+        }
         if (load & (!loadPath.IsNullOrEmpty()))
         {
             testTextEditorEx.Load(loadPath);
         }
         return tabItem;
+    }
+    /// <summary>
+    /// 识别文件语言
+    /// </summary>
+    /// <param name="SuffixName">文件后缀名</param>
+    /// <param name="log">是否记录于日志中</param>
+    /// <returns>语言类型</returns>
+    public static string GetLanguage(string SuffixName, bool log = true)
+    {
+        SuffixName = Path.GetExtension(SuffixName);
+        if (log)
+        {
+            App.LOGGER.Log($"已获取文件名: {SuffixName}");
+        }
+        if (SuffixName.Contains(".cs"))
+        {
+            return "C-Sharp";
+        }
+        else if (SuffixName.Contains(".pycn") | SuffixName.Contains(".pyCN"))
+        {
+            return "Py-CN";
+        }
+        else if (SuffixName.Contains(".py") | SuffixName.Contains(".pyw") | SuffixName.Contains(".pyi"))
+        {
+            return "Python";
+        }
+        else if (SuffixName.Contains(".xml") | SuffixName.Contains(".xshd"))
+        {
+            return "XML";
+        }
+        else
+        {
+            return "PlainText";
+        }
+
     }
 
     internal void NewProj()
