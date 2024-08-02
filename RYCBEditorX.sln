@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX", "RYCBEditorX.csproj", "{CA9B5BDC-9FEB-4698-A6BB-681EB7BEB2E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3192145E-EE32-414B-ABBE-340D0F8DBAE7} = {3192145E-EE32-414B-ABBE-340D0F8DBAE7}
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D} = {7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.API", "..\RYCBEditorX.API\RYCBEditorX.API.csproj", "{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Dialogs", "..\RYCBEditorX.Dialogs\RYCBEditorX.Dialogs.csproj", "{3192145E-EE32-414B-ABBE-340D0F8DBAE7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D} = {7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Utils", "..\RYCBEditorX.Utils\RYCBEditorX.Utils.csproj", "{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA9B5BDC-9FEB-4698-A6BB-681EB7BEB2E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA9B5BDC-9FEB-4698-A6BB-681EB7BEB2E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA9B5BDC-9FEB-4698-A6BB-681EB7BEB2E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA9B5BDC-9FEB-4698-A6BB-681EB7BEB2E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3192145E-EE32-414B-ABBE-340D0F8DBAE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3192145E-EE32-414B-ABBE-340D0F8DBAE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3192145E-EE32-414B-ABBE-340D0F8DBAE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3192145E-EE32-414B-ABBE-340D0F8DBAE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8C3D63EF-1130-43A6-ADB4-1DECF478855B}
+	EndGlobalSection
+EndGlobal
