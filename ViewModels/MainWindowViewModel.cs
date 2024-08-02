@@ -78,7 +78,11 @@ public class MainWindowViewModel : BindableBase
             FontFamily = new(GlobalConfig.Editor.FontFamilyName),
             FontSize = GlobalConfig.Editor.FontSize,
         };
-        dock.Children.Add(new TextBlock() { Text = System.IO.Path.GetFileName(filename) });
+        dock.Children.Add(new TextBlock()
+        {
+            Text = System.IO.Path.GetFileName(filename),
+            VerticalAlignment = VerticalAlignment.Center,
+        });
         dock.Children.Add(new Button()
         {
             Command = CloseTabCmd,

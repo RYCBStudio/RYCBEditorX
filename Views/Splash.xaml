@@ -1,0 +1,51 @@
+﻿<Window
+    x:Class="RYCBEditorX.Views.Splash"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:RYCBEditorX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
+    Title="Splash"
+    Width="800"
+    Height="450"
+    MaxWidth="800"
+    MaxHeight="450"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SplashViewModel}"
+    Icon="/Assets/Icon-Ver3.256x.png"
+    IsVisibleChanged="Window_Loaded"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Background>
+        <ImageBrush ImageSource="/Assets/IDE_splash.png" />
+    </Window.Background>
+    <Window.Resources>
+        <system:Double x:Key="TitleFontSize">130</system:Double>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="Transparent"
+            FontSize="{DynamicResource TitleFontSize}"
+            Foreground="White"
+            Text="RYCB Editor" />
+        <TextBlock
+            Grid.Row="1"
+            Margin="0,0,5,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Background="Transparent"
+            FontSize="30"
+            Foreground="White"
+            Text="RYCB Studio" />
+    </Grid>
+</Window>

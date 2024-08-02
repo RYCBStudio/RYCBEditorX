@@ -6,6 +6,8 @@ using Prism.Ioc;
 using Prism.Modularity;
 using RYCBEditorX.Views;
 using RYCBEditorX.Utils;
+using RYCBEditorX.Dialogs.Views;
+using System.Windows.Media;
 
 namespace RYCBEditorX;
 /// <summary>
@@ -13,6 +15,8 @@ namespace RYCBEditorX;
 /// </summary>
 public partial class App : PrismApplication
 {
+    private Splash Splash;
+
     internal static readonly string STARTUP_PATH = System.Windows.Forms.Application.StartupPath;
 
     internal static Utils.LogUtil LOGGER
@@ -32,17 +36,31 @@ public partial class App : PrismApplication
 
     protected override void Initialize()
     {
+        Splash = new Splash();
+        this.Dispatcher.Invoke(Splash.Show);
         LOGGER = new(STARTUP_PATH + "\\Logs\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
         LOGGER.Log("初始化...");
         System.Windows.Forms.Application.SetUnhandledExceptionMode(System.Windows.Forms.UnhandledExceptionMode.CatchException);
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-        App.Current.Dispatcher.UnhandledException += Dispatcher_UnhandledException; ;
+        Current.Dispatcher.UnhandledException += Dispatcher_UnhandledException; ;
         LoadConfig();
         base.Initialize();
     }
 
+    protected override void OnInitialized()
+    {
+        Splash.Close();
+        base.OnInitialized();
+    }
+
     private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
+        LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
+        LightTip.ViewModelInstance.Icon = LightTip.ERROR;
+        LightTip.ViewModelInstance.Content = $"{e.Exception.GetType()}\n{e.Exception.Message}";
+        Views.MainWindow.Notifications.Add(new(LightTip.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
+        Views.MainWindow.Instance.NotificationsList.Items.Refresh();
+        LightTip.Instance.Show();
         LOGGER.Error(e.Exception);
         LOGGER.Log("主线程发生异常");
         LOGGER.Log("IDE正在尝试自动解决崩溃...", module: EnumLogModule.CUSTOM, customModuleName: "异常处理");
@@ -102,8 +120,10 @@ public partial class App : PrismApplication
 
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
+        LOGGER.Log("加载 Dialog 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
         moduleCatalog.AddModule<Dialogs.DialogsModule>();
-        moduleCatalog.AddModule<Utils.UtilsModule>();
+        LOGGER.Log("加载 Utils 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
+        moduleCatalog.AddModule<UtilsModule>();
         base.ConfigureModuleCatalog(moduleCatalog);
     }
 }

@@ -7,27 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\Fonts\iconfont.ttf" />
-    <None Remove="Assets\Icons\about.png" />
-    <None Remove="Assets\Icons\clipboard.png" />
-    <None Remove="Assets\Icons\close.png" />
-    <None Remove="Assets\Icons\commentcode.png" />
-    <None Remove="Assets\Icons\copy.png" />
-    <None Remove="Assets\Icons\cut.png" />
-    <None Remove="Assets\Icons\file-open.png" />
-    <None Remove="Assets\Icons\file.png" />
-    <None Remove="Assets\Icons\licenses.png" />
-    <None Remove="Assets\Icons\maximum.png" />
-    <None Remove="Assets\Icons\minimum.png" />
-    <None Remove="Assets\Icons\newfile.png" />
-    <None Remove="Assets\Icons\package.png" />
-    <None Remove="Assets\Icons\project.png" />
-    <None Remove="Assets\Icons\python.png" />
-    <None Remove="Assets\Icons\restorewindow.png" />
-    <None Remove="Assets\Icons\save.png" />
-    <None Remove="Assets\Icons\search.png" />
-    <None Remove="Assets\Icons\settings.png" />
-    <None Remove="Assets\Icons\toolbox.png" />
-    <None Remove="Assets\Icons\uncommentcode.png" />
+    <None Remove="Assets\IDE_splash.png" />
     <None Remove="Views\Icon-Ver3.256x.png" />
   </ItemGroup>
   <ItemGroup>
@@ -49,30 +29,7 @@
   <ItemGroup>
     <Resource Include="Assets\Fonts\iconfont.ttf" />
     <Resource Include="Assets\Icon-Ver3.256x.png" />
-    <Resource Include="Assets\Icons\about.png" />
-    <Resource Include="Assets\Icons\clipboard.png" />
-    <Resource Include="Assets\Icons\close.png" />
-    <Resource Include="Assets\Icons\commentcode.png" />
-    <Resource Include="Assets\Icons\copy.png" />
-    <Resource Include="Assets\Icons\cut.png" />
-    <Resource Include="Assets\Icons\file-open.png" />
-    <Resource Include="Assets\Icons\file.png" />
-    <Resource Include="Assets\Icons\licenses.png" />
-    <Resource Include="Assets\Icons\maximum.png" />
-    <Resource Include="Assets\Icons\minimum.png" />
-    <Resource Include="Assets\Icons\newfile.png" />
-    <Resource Include="Assets\Icons\package.png" />
-    <Resource Include="Assets\Icons\project.png" />
-    <Resource Include="Assets\Icons\python.png" />
-    <Resource Include="Assets\Icons\restorewindow.png" />
-    <Resource Include="Assets\Icons\save.png" />
-    <Resource Include="Assets\Icons\search.png" />
-    <Resource Include="Assets\Icons\settings.png" />
-    <Resource Include="Assets\Icons\toolbox.png" />
-    <Resource Include="Assets\Icons\uncommentcode.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ControlEx\" />
+    <Resource Include="Assets\IDE_splash.png" />
   </ItemGroup>
   <ItemGroup>
     <None Update="App.config">
