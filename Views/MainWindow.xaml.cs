@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Windows;
 using System.Windows.Media;
-using RYCBEditorX.Dialogs.ViewModels;
 using RYCBEditorX.Dialogs.Views;
 using RYCBEditorX.Utils;
 
@@ -13,7 +10,8 @@ namespace RYCBEditorX.Views;
 /// </summary>
 public partial class MainWindow : Window
 {
-    internal static MainWindow Instance
+    internal static bool IsCodeRunning = false;
+    public static MainWindow Instance
     {
         get; set;
     }
@@ -36,11 +34,11 @@ public partial class MainWindow : Window
         NotificationsList.ItemsSource = Notifications;
         if (GlobalConfig.Skin == "dark")
         {
-            MainGrid.Background = (Brush)Application.Current.Resources["DarkBackgroud"];
+            MainGrid.Background = (Brush)Application.Current.Resources["DarkBackGround"];
         }
         else
         {
-            MainGrid.Background = (Brush)Application.Current.Resources["LightBackgroud"];
+            MainGrid.Background = (Brush)Application.Current.Resources["LightBackGround"];
         }
         //MainTabCtrl.ItemsSource = texts;
         //FluentMessageBox.Theme = "Error";
@@ -81,7 +79,9 @@ public partial class MainWindow : Window
         LightTip.ViewModelInstance.Content = "Test";
         Notifications.Add(new(LightTip.INFO, (Brush)LightTip.Instance.Resources["InfoColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
+        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
+        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
     }
 
     private void MWarntest_Click(object sender, RoutedEventArgs e)
@@ -91,7 +91,9 @@ public partial class MainWindow : Window
         LightTip.ViewModelInstance.Content = "Test";
         Notifications.Add(new(LightTip.WARN, (Brush)LightTip.Instance.Resources["WarnColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
+        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
+        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
     }
 
     private void MErrtest_Click(object sender, RoutedEventArgs e)
@@ -101,7 +103,9 @@ public partial class MainWindow : Window
         LightTip.ViewModelInstance.Content = "Test";
         Notifications.Add(new(LightTip.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
+        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
+        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
     }
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -130,6 +134,30 @@ public partial class MainWindow : Window
     private void NotificationDockPanel_LostFocus(object sender, RoutedEventArgs e)
     {
         BtnClearSelected.Visibility = Visibility.Collapsed;
+    }
+
+    private void Window_Closed(object sender, System.EventArgs e)
+    {
+        Application.Current.Shutdown();
+    }
+
+    private void NotificationToggleButton_Click(object sender, RoutedEventArgs e)
+    {
+        NotificationBadge.BadgeMargin = new(0, 1, -100, 0);
+    }
+
+    private void FileSavingTip_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    {
+        if (FileSavingTip.Text == Application.Current.Resources["Main.Bottom.FileSavingTip.Success"].ToString())
+        {
+            FileSavingIcon.Foreground = (Brush)Application.Current.Resources["SuccessBrush"];
+            FileSavingIcon.Text = "\xe860";
+        }
+        else
+        {
+            FileSavingIcon.Foreground = (Brush)Application.Current.Resources["DangerBrush"];
+            FileSavingIcon.Text = "\xe685";
+        }
     }
 }
 

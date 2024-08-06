@@ -9,14 +9,17 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:utils="clr-namespace:RYCBEditorX.Utils;assembly=RYCBEditorX.Utils"
     xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
     Title="RYCB Editor X Redesigned"
     Width="966"
     Height="470"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    Closed="Window_Closed"
     Closing="Window_Closing"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <FontFamily x:Key="iconfont">
@@ -38,6 +41,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <utils:FileSavingTipConverter x:Key="fstc" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding
@@ -58,39 +62,49 @@
             Modifiers="Ctrl" />
         <KeyBinding
             Key="X"
-            Command="{Binding EditingCmd}"
+            Command="{Binding CutCmd}"
             Modifiers="Ctrl" />
         <KeyBinding
             Key="C"
-            Command="{Binding EditingCmd}"
+            Command="{Binding CopyCmd}"
             Modifiers="Ctrl" />
         <KeyBinding
             Key="V"
-            Command="{Binding EditingCmd}"
+            Command="{Binding PasteCmd}"
             Modifiers="Ctrl" />
         <KeyBinding
             Key="C"
-            Command="{Binding EditingCmd}"
-            Modifiers="Ctrl+Shift" />
+            Command="{Binding CommentLinesCmd}"
+            Modifiers="Ctrl+Alt" />
         <KeyBinding
             Key="U"
-            Command="{Binding EditingCmd}"
-            Modifiers="Ctrl+Shift" />
+            Command="{Binding UncommentLinesCmd}"
+            Modifiers="Ctrl+Alt" />
+        <KeyBinding Key="F5" Command="{Binding RunCmd}" />
+        <KeyBinding
+            Key="F5"
+            Command="{Binding DebugCmd}"
+            Modifiers="Shift" />
+        <KeyBinding
+            Key="G"
+            Command="{Binding GotoLineCmd}"
+            Modifiers="Ctrl" />
     </Window.InputBindings>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="2*" />
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="9.6*" />
-            <ColumnDefinition Width="0.4*" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
         <Menu x:Name="MainMenu" Grid.ColumnSpan="2">
-            <MenuItem FontSize="12" Header="_File">
-                <MenuItem Header="New">
+            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.File}">
+                <MenuItem Header="{DynamicResource Main.Menu.File.New}">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -99,8 +113,8 @@
                     </MenuItem.Icon>
                     <MenuItem
                         Command="{Binding NewFileCmd}"
-                        Header="File"
-                        InputGestureText="Ctrl+F">
+                        Header="{DynamicResource Main.Menu.File.New.File}"
+                        InputGestureText="Ctrl+N">
                         <MenuItem.Icon>
                             <TextBlock
                                 FontFamily="{StaticResource iconfont}"
@@ -110,7 +124,7 @@
                     </MenuItem>
                     <MenuItem
                         Command="{Binding NewProjectCmd}"
-                        Header="Project"
+                        Header="{DynamicResource Main.Menu.File.New.Project}"
                         InputGestureText="Ctrl+P">
                         <MenuItem.Icon>
                             <TextBlock
@@ -122,7 +136,7 @@
                 </MenuItem>
                 <MenuItem
                     Command="{Binding OpenFileCmd}"
-                    Header="Open"
+                    Header="{DynamicResource Main.Menu.File.Open}"
                     InputGestureText="Ctrl+O">
                     <MenuItem.Icon>
                         <TextBlock
@@ -132,8 +146,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Command="{Binding SaveAsCmd}"
-                    Header="Save"
+                    Command="{Binding SaveFileCmd}"
+                    Header="{DynamicResource Main.Menu.File.Save}"
                     InputGestureText="Ctrl+S">
                     <MenuItem.Icon>
                         <TextBlock
@@ -142,11 +156,36 @@
                             Text="&#xe67c;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="_Save As" />
+                <MenuItem Command="{Binding SaveAsCmd}" Header="{DynamicResource Main.Menu.File.SaveAs}" />
             </MenuItem>
-            <MenuItem FontSize="12" Header="_Edit">
+            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Edit}">
                 <MenuItem
-                    Header="Cut"
+                    Command="{Binding UndoCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.Undo}"
+                    InputGestureText="Ctrl+Z"
+                    Tag="Undo">
+                    <MenuItem.Icon>
+                        <TextBlock
+                            FontFamily="{StaticResource iconfont}"
+                            FontSize="15"
+                            Text="&#xe739;" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding RedoCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.Redo}"
+                    InputGestureText="Ctrl+Y"
+                    Tag="Redo">
+                    <MenuItem.Icon>
+                        <TextBlock
+                            FontFamily="{StaticResource iconfont}"
+                            FontSize="15"
+                            Text="&#xe63a;" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding CutCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.Cut}"
                     InputGestureText="Ctrl+X"
                     Tag="Cut">
                     <MenuItem.Icon>
@@ -157,7 +196,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Paste"
+                    Command="{Binding PasteCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.Paste}"
                     InputGestureText="Ctrl+V"
                     Tag="Paste">
                     <MenuItem.Icon>
@@ -168,7 +208,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Copy"
+                    Command="{Binding CopyCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.Copy}"
                     InputGestureText="Ctrl+C"
                     Tag="Copy">
                     <MenuItem.Icon>
@@ -179,7 +220,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Comment Selected Lines"
+                    Command="{Binding CommentLinesCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.CSL}"
                     InputGestureText="Ctrl+Alt+C"
                     Tag="csl">
                     <MenuItem.Icon>
@@ -190,7 +232,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Uncomment Selected Lines"
+                    Command="{Binding UncommentLinesCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.USL}"
                     InputGestureText="Ctrl+Alt+U"
                     Tag="usl">
                     <MenuItem.Icon>
@@ -200,9 +243,21 @@
                             Text="&#xf9a5;" />
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem
+                    Command="{Binding GotoLineCmd}"
+                    Header="{DynamicResource Main.Menu.Edit.GL}"
+                    InputGestureText="Ctrl+G"
+                    Tag="gl">
+                    <MenuItem.Icon>
+                        <TextBlock
+                            FontFamily="{StaticResource iconfont}"
+                            FontSize="15"
+                            Text="&#xe602;" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
-            <MenuItem FontSize="12" Header="_Options">
-                <MenuItem Header="Settings" InputGestureText="Ctrl+Alt+S">
+            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Options}">
+                <MenuItem Header="{DynamicResource Main.Menu.Options.Settings}" InputGestureText="Ctrl+Alt+S">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -211,25 +266,25 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem FontSize="12" Header="_Tools">
-                <MenuItem Header="Application">
-                    <MenuItem Header="Restart" />
-                    <MenuItem Header="Exit" />
-                    <MenuItem Header="MessageTest">
+            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Tools}">
+                <MenuItem Header="{DynamicResource Main.Menu.Tools.App}">
+                    <MenuItem Header="{DynamicResource Main.Menu.Tools.App.Restart}" />
+                    <MenuItem Header="{DynamicResource Main.Menu.Tools.App.Exit}" />
+                    <MenuItem Header="{DynamicResource Main.Menu.Tools.App.MessageTest}">
                         <MenuItem Click="MInfotest_Click" Header="Info" />
                         <MenuItem Click="MWarntest_Click" Header="Warn" />
                         <MenuItem Click="MErrtest_Click" Header="Error" />
                     </MenuItem>
-                    <MenuItem Click="ThrowEx_Click" Header="Throw an exception" />
+                    <MenuItem Click="ThrowEx_Click" Header="{DynamicResource Main.Menu.Tools.App.ThrowEx}" />
                 </MenuItem>
-                <MenuItem Header="Manage Packages of">
+                <MenuItem Header="{DynamicResource Main.Menu.Tools.packagemgmt}">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
                             FontSize="15"
                             Text="&#xecd2;" />
                     </MenuItem.Icon>
-                    <MenuItem Header="Python">
+                    <MenuItem Command="{Binding PythonPkgMgmtCmd}" Header="_Python">
                         <MenuItem.Icon>
                             <TextBlock
                                 FontFamily="{StaticResource iconfont}"
@@ -238,11 +293,11 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <MenuItem Header="IDE" />
+                    <MenuItem Header="_IDE" />
                 </MenuItem>
             </MenuItem>
-            <MenuItem FontSize="12" Header="_Help">
-                <MenuItem Header="About">
+            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Help}">
+                <MenuItem Command="{Binding AboutCmd}" Header="{DynamicResource Main.Menu.Help.About}">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -250,7 +305,7 @@
                             Text="&#xe600;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Licenses and Copyrights">
+                <MenuItem Header="{DynamicResource Main.Menu.Help.LC}">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource iconfont}"
@@ -258,25 +313,33 @@
                             Text="&#xe6d2;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Treasure Box" />
+                <MenuItem Header="{DynamicResource Main.Menu.Help.tbox}" />
             </MenuItem>
         </Menu>
         <TabControl
             x:Name="MainTabCtrl"
-            Grid.Row="1"
+            Grid.Row="2"
             IsSynchronizedWithCurrentItem="True" />
         <TabControl
             x:Name="BottomTabCtrl"
-            Grid.Row="2"
+            Grid.Row="3"
             Grid.ColumnSpan="2"
             Margin="0,1,0,0"
             IsSynchronizedWithCurrentItem="True"
             TabStripPlacement="Bottom">
-            <TabItem Header="Errors" />
-            <TabItem Header="Console">
-                <ctrlex:ConsoleHost x:Name="MainConsoleHost" />
+            <TabItem Header="{DynamicResource Main.Bottom.Errors}" />
+            <TabItem Header="{DynamicResource Main.Bottom.Console}">
+                <!--<ctrlex:ConsoleHost x:Name="MainConsoleHost" />-->
+                <!--<TextBox
+                    x:Name="ConsoleHost"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Top"
+                    KeyDown="ConsoleHost_KeyDown"
+                    TextChanged="ConsoleHost_TextChanged" />-->
+                <Border x:Name="ConsoleHost" />
             </TabItem>
-            <TabItem Header="Highlight Profiles">
+            <TabItem Header="{DynamicResource Main.Bottom.HPs}">
                 <ListBox BorderBrush="Transparent">
                     <ListBoxItem>
                         <StackPanel Orientation="Horizontal">
@@ -298,18 +361,44 @@
                 </ListBox>
             </TabItem>
         </TabControl>
-        <hc:ButtonGroup
+        <hc:SimpleStackPanel
             Grid.Row="1"
-            Grid.RowSpan="2"
+            Grid.RowSpan="3"
             Grid.Column="1"
             Orientation="Vertical">
+            <hc:Badge
+                x:Name="NotificationBadge"
+                BadgeMargin="0,1,-100,0"
+                Status="Dot"
+                Style="{StaticResource BadgeDanger}">
+                <ToggleButton
+                    x:Name="NotificationToggleButton"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="Transparent"
+                    Click="NotificationToggleButton_Click"
+                    Content="&#xe679;"
+                    FontFamily="{StaticResource iconfont}"
+                    FontSize="16"
+                    IsChecked="{Binding IsOpen, ElementName=NotificationDrawer}" />
+            </hc:Badge>
             <ToggleButton
+                x:Name="ProjectToggleButton"
+                HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
-                Content="&#xe679;"
+                Content="&#xe63d;"
                 FontFamily="{StaticResource iconfont}"
                 FontSize="16"
-                IsChecked="{Binding IsOpen, ElementName=NotificationDrawer}" />
-        </hc:ButtonGroup>
+                IsChecked="{Binding IsOpen, ElementName=ProjectDrawer}" />
+            <ToggleButton
+                x:Name="StructureTreeToggleButton"
+                HorizontalAlignment="Stretch"
+                BorderBrush="Transparent"
+                Click="NotificationToggleButton_Click"
+                Content="&#xe6e7;"
+                FontFamily="{StaticResource iconfont}"
+                FontSize="16"
+                IsChecked="{Binding IsOpen, ElementName=StructTreeDrawer}" />
+        </hc:SimpleStackPanel>
         <hc:Drawer
             x:Name="NotificationDrawer"
             Dock="Right"
@@ -330,7 +419,7 @@
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
                             Style="{StaticResource TextBlockTitle}"
-                            Text="Notifications" />
+                            Text="{DynamicResource Main.SideBar.Notifications.Title}" />
                         <Button
                             HorizontalAlignment="Right"
                             hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
@@ -393,7 +482,102 @@
                 </Grid>
             </Border>
         </hc:Drawer>
-        <DockPanel Grid.Row="3" Grid.ColumnSpan="2">
+        <hc:Drawer
+            x:Name="ProjectDrawer"
+            Dock="Right"
+            ShowMode="Cover">
+            <Border
+                Width="300"
+                Background="{DynamicResource RegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource TextBlockTitle}"
+                            Text="{DynamicResource Main.SideBar.Project.Title}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                            Command="hc:ControlCommands.Close"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
+                            Style="{StaticResource ButtonIcon}" />
+                    </DockPanel>
+                    <ListBox
+                        x:Name="ProjectTreeList"
+                        Grid.Row="1"
+                        SelectionChanged="NotificationsList_SelectionChanged"
+                        Style="{StaticResource NotificationList}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel LostFocus="NotificationDockPanel_LostFocus">
+                                    <TextBlock
+                                        x:Name="Icon"
+                                        DockPanel.Dock="Left"
+                                        FontFamily="{StaticResource iconfont}"
+                                        FontSize="28"
+                                        Foreground="{Binding IconBrush}"
+                                        Text="{Binding Icon}" />
+                                    <TextBox
+                                        x:Name="Content"
+                                        VerticalContentAlignment="Center"
+                                        BorderBrush="Transparent"
+                                        FontSize="12"
+                                        IsReadOnly="True"
+                                        Text="{Binding Content}"
+                                        TextWrapping="WrapWithOverflow" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <hc:Drawer
+            x:Name="StructTreeDrawer"
+            Dock="Right"
+            MaskCanClose="False"
+            ShowMask="False"
+            ShowMode="Cover">
+            <Border
+                Width="600"
+                Background="{DynamicResource RegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource TextBlockTitle}"
+                            Text="{DynamicResource Main.SideBar.Struct.Title}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                            Command="hc:ControlCommands.Close"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
+                            Style="{StaticResource ButtonIcon}" />
+                    </DockPanel>
+                    <TreeView
+                        x:Name="FileStructTree"
+                        Grid.Row="1"
+                        Background="Transparent"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Style="{StaticResource BaseStyle}" />
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <DockPanel Grid.Row="4" Grid.ColumnSpan="2">
             <StatusBar
                 x:Name="sbar"
                 Grid.Row="3"
@@ -407,9 +591,101 @@
                 </StatusBarItem>
                 <StatusBarItem
                     HorizontalAlignment="Right"
-                    Content="Current Highlighting Profile: "
+                    Content="{DynamicResource Main.Bottom.CHL}"
                     DockPanel.Dock="Right" />
+                <StatusBarItem>
+                    <StackPanel
+                        x:Name="FileSavingPanel"
+                        Orientation="Horizontal"
+                        Visibility="Hidden">
+                        <TextBlock
+                            x:Name="FileSavingIcon"
+                            FontFamily="{StaticResource iconfont}"
+                            FontSize="20"
+                            Foreground="{StaticResource SuccessBrush}"
+                            Text="&#xe860;" />
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            FontSize="16"
+                            Style="{StaticResource TextBlockDefault}"
+                            Text="{DynamicResource Main.Bottom.FileSavingTip}" />
+                        <TextBox
+                            x:Name="FileSavingTip"
+                            Margin="10,0,0,0"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            FontSize="16"
+                            IsReadOnly="True"
+                            IsReadOnlyCaretVisible="False"
+                            SelectionBrush="Transparent"
+                            Style="{StaticResource TextBox.Small}"
+                            Text="{DynamicResource Main.Bottom.FileSavingTip.Success}"
+                            TextChanged="FileSavingTip_TextChanged" />
+                    </StackPanel>
+                </StatusBarItem>
             </StatusBar>
         </DockPanel>
+        <ToolBar Grid.Row="1" Height="auto">
+            <Button
+                Margin="2.5,0,2.5,0"
+                Command="{Binding RunCmd}"
+                Content="&#xe65d;"
+                FontFamily="{StaticResource iconfont}"
+                FontSize="15"
+                Style="{StaticResource ButtonInfo}" />
+            <hc:TransitioningContentControl TransitionMode="Left2Right">
+                <hc:FlexPanel x:Name="RunPanel" Visibility="Collapsed">
+                    <hc:ComboBox>
+                        <ComboBoxItem>
+                            Current File
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            Profile 1
+                        </ComboBoxItem>
+                    </hc:ComboBox>
+                    <Button
+                        Margin="2.5,0,2.5,0"
+                        Command="{Binding ConfigRunProfilesCmd}"
+                        Content="&#xe66e;"
+                        FontFamily="{StaticResource iconfont}"
+                        FontSize="18"
+                        Style="{StaticResource ButtonDashed}" />
+                </hc:FlexPanel>
+            </hc:TransitioningContentControl>
+            <Button
+                Margin="2.5,0,2.5,0"
+                Command="{Binding StopCmd}"
+                Content="&#xea89;"
+                FontFamily="{StaticResource iconfont}"
+                Style="{StaticResource ButtonDanger}" />
+            <Button
+                Margin="2.5,0,2.5,0"
+                Command="{Binding DebugCmd}"
+                Content="&#xe606;"
+                FontFamily="{StaticResource iconfont}"
+                Style="{StaticResource ButtonWarning}" />
+            <hc:TransitioningContentControl TransitionMode="Left2Right">
+                <hc:FlexPanel x:Name="DebugPanel" Visibility="Collapsed">
+                    <Button
+                        Margin="2.5,0,2.5,0"
+                        Command="{Binding StepInCmd}"
+                        Content="&#xe855;"
+                        FontFamily="{StaticResource iconfont}"
+                        Style="{StaticResource ButtonDashed}" />
+                    <Button
+                        Margin="2.5,0,2.5,0"
+                        Command="{Binding StepPassCmd}"
+                        Content="&#xe854;"
+                        FontFamily="{StaticResource iconfont}"
+                        Style="{StaticResource ButtonDashed}" />
+                    <Button
+                        Margin="2.5,0,2.5,0"
+                        Command="{Binding StepOutCmd}"
+                        Content="&#xe853;"
+                        FontFamily="{StaticResource iconfont}"
+                        Style="{StaticResource ButtonDashed}" />
+                </hc:FlexPanel>
+            </hc:TransitioningContentControl>
+        </ToolBar>
     </Grid>
 </Window>

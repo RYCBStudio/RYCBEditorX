@@ -13,6 +13,7 @@
     MaxWidth="800"
     MaxHeight="450"
     d:DataContext="{d:DesignInstance Type=viewmodels:SplashViewModel}"
+    Closed="Window_Closed"
     Icon="/Assets/Icon-Ver3.256x.png"
     IsVisibleChanged="Window_Loaded"
     ResizeMode="NoResize"

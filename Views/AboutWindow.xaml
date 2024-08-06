@@ -1,0 +1,75 @@
+﻿<hc:Window
+    x:Class="RYCBEditorX.Views.AboutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:RYCBEditorX.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
+    Title="About"
+    Width="535"
+    Height="296"
+    d:DataContext="{d:DesignInstance Type=viewmodels:AboutViewModel}"
+    Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <FontFamily x:Key="iconfont">
+            /RYCBEditorX;component/Assets/Fonts/#ali-ifont
+        </FontFamily>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="6*" />
+        </Grid.ColumnDefinitions>
+        <Image Grid.RowSpan="4" Source="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png" />
+        <TextBlock
+            Grid.Column="1"
+            FontSize="50"
+            Style="{StaticResource TextBlockBoldBaseStyle}">
+            RYCB Editor
+        </TextBlock>
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            FontSize="30"
+            Style="{StaticResource TextBlockBaseStyle}"
+            Text="{Binding BuildTime}"
+            TextWrapping="WrapWithOverflow" />
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            FontSize="30"
+            Style="{StaticResource TextBlockBaseStyle}"
+            Text="{Binding Version}"
+            TextWrapping="WrapWithOverflow" />
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="20,0,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            FontFamily="{StaticResource iconfont}"
+            FontSize="56"
+            Text="&#xea0a;" />
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="0,0,15,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            FontSize="35"
+            TextWrapping="WrapWithOverflow">
+            <Hyperlink NavigateUri="https://github.com/RYCBStudio/RYCBEditorX">Open Source</Hyperlink>
+        </TextBlock>
+    </Grid>
+</hc:Window>
