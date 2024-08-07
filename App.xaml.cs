@@ -10,6 +10,7 @@ using RYCBEditorX.Dialogs.Views;
 using System.Windows.Media;
 using Microsoft.TeamFoundation.Common;
 using System.Diagnostics;
+using System.IO;
 
 namespace RYCBEditorX;
 /// <summary>
@@ -77,6 +78,25 @@ public partial class App : PrismApplication
         }
     }
 
+    private void RefreshItems()
+    {
+        GlobalConfig.CurrentProfiles = [];
+        foreach (var item in Directory.EnumerateFiles(STARTUP_PATH+"\\Profiles\\Runners"))
+        {
+            var icbfp = new ICBFileProcessor(item);
+            GlobalConfig.RunProfile rp = new()
+            {
+                Name = icbfp.GetInfo(ICBFileProcessor.InfoType.name),
+                ScriptPath = icbfp.GetInfo(ICBFileProcessor.InfoType.script),
+                InterpreterArgs = icbfp.GetInfo(ICBFileProcessor.InfoType.itpr_args),
+                Interpreter = icbfp.GetInfo(ICBFileProcessor.InfoType.itpr),
+                ScriptArgs = icbfp.GetInfo(ICBFileProcessor.InfoType.script_args),
+                UseBPSR = bool.Parse(icbfp.GetInfo(ICBFileProcessor.InfoType.use_bpsr)),
+            };
+            icbfp = null;
+            GlobalConfig.CurrentProfiles.Add(rp);
+        }
+    }
 
     private void LoadConfig()
     {
@@ -92,6 +112,8 @@ public partial class App : PrismApplication
         GlobalConfig.LOGGER = LOGGER;
         GlobalConfig.Resources = Resources;
         GlobalConfig.LocalizationString = AppSettings.Settings["Language"].Value;
+
+        RefreshItems();
 
         if (GlobalConfig.XshdFilePath.IsNullOrEmpty())
         {

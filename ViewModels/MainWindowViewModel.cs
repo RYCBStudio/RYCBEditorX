@@ -20,6 +20,7 @@ using RYCBEditorX.Utils;
 using Microsoft.Web.WebView2.Wpf;
 using System.Threading.Tasks;
 using Markdig;
+using System.Collections.Generic;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
@@ -140,6 +141,23 @@ public partial class MainWindowViewModel : BindableBase
         StopCmd = new DelegateCommand(Stop);
         PythonPkgMgmtCmd = new DelegateCommand(PythonPkgMgmt);
         GotoLineCmd = new DelegateCommand(GotoLine);
+        ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
+    }
+
+    internal void ConfigureRunProfiles()
+    {
+        List<ProfileInfo> profiles = [];
+        List<string> profile_paths = [];
+        foreach (var item in Directory.EnumerateFiles(App.STARTUP_PATH + "\\Profiles\\Runners"))
+        {
+            MainWindow.Instance.RunProfilesComboBox.Items.Add(Path.GetFileNameWithoutExtension(item));
+            profiles.Add(new()
+            {
+                Name = Path.GetFileNameWithoutExtension(item)
+            });
+            profile_paths.Add(item);
+        }
+        new RunnerProfileConfig(profiles, profile_paths).ShowDialog();
     }
 
     internal void Debug()
@@ -180,12 +198,26 @@ public partial class MainWindowViewModel : BindableBase
                 FileName = App.STARTUP_PATH + "\\Tools\\Runner.exe",
                 UseShellExecute = false,
             }
+        }; 
+        Process runner_proc_protecter = new()
+        {
+            StartInfo = new()
+            {
+                Arguments = tmpFileName,
+                FileName = App.STARTUP_PATH + "\\Tools\\Runner.exe",
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+            }
         };
         runner.Start();
+        runner_proc_protecter.Start();
         //SetForegroundWindow(runner.Handle);
         SetWindowPos(runner.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
         _runnerProc = runner;
         MainWindow.Instance.BottomTabCtrl.SelectedIndex = 1;
+        MainWindow.Instance.ConsoleHost.Text = runner_proc_protecter.StandardError.ReadToEnd();
     }
 
     internal void Stop()
@@ -252,6 +284,7 @@ public partial class MainWindowViewModel : BindableBase
         if (new GotoLineWindow(t.LineCount).ShowDialog() == true)
         {
             t.ScrollToLine(GotoLineWindow.Line);
+            t.TextArea.Caret.Position = new TextViewPosition(GotoLineWindow.Line, 0);
             //    double vertOffset = (GetCurrentTextEditor().TextArea.TextView.DefaultLineHeight) * GotoLineWindow.Line;
             //    GetCurrentTextEditor().ScrollToVerticalOffset(vertOffset);
         }
@@ -432,12 +465,16 @@ public partial class MainWindowViewModel : BindableBase
             };
             if (Path.GetExtension(filename) != "dll" || !(fileSize <= GlobalConfig.MaximumFileSize))
             {
-                var resourceName = GlobalConfig.XshdFilePath + $"\\{GlobalConfig.Editor.Theme}\\{GetLanguage(filename)}.xshd";
+                var resourceName = GlobalConfig.XshdFilePath + $"{GlobalConfig.Editor.Theme}\\{GetLanguage(filename)}.xshd";
+#pragma warning disable IDE0063 // 使用简单的 "using" 语句
                 using (Stream s = new FileStream(resourceName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
                 {
-                    using System.Xml.XmlTextReader reader = new(s);
-                    var xshd = HighlightingLoader.LoadXshd(reader);
-                    testTextEditorEx.SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
+                    using (System.Xml.XmlTextReader reader = new(s))
+                    {
+
+                        var xshd = HighlightingLoader.LoadXshd(reader);
+                        testTextEditorEx.SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
+                    }
                 }
             }
             if (load & (!loadPath.IsNullOrEmpty()))
@@ -477,6 +514,10 @@ public partial class MainWindowViewModel : BindableBase
         else if (SuffixName.Contains(".pycn") | SuffixName.Contains(".pyCN"))
         {
             return "Py-CN";
+        }
+        else if (SuffixName.Contains(".pyx"))
+        {
+            return "Cython";
         }
         else if (SuffixName.Contains(".py") | SuffixName.Contains(".pyw") | SuffixName.Contains(".pyi"))
         {

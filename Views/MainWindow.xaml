@@ -330,14 +330,12 @@
             <TabItem Header="{DynamicResource Main.Bottom.Errors}" />
             <TabItem Header="{DynamicResource Main.Bottom.Console}">
                 <!--<ctrlex:ConsoleHost x:Name="MainConsoleHost" />-->
-                <!--<TextBox
+                <TextBox
                     x:Name="ConsoleHost"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    VerticalContentAlignment="Top"
-                    KeyDown="ConsoleHost_KeyDown"
-                    TextChanged="ConsoleHost_TextChanged" />-->
-                <Border x:Name="ConsoleHost" />
+                    VerticalContentAlignment="Top" />
+                <!--<Border x:Name="ConsoleHost" />-->
             </TabItem>
             <TabItem Header="{DynamicResource Main.Bottom.HPs}">
                 <ListBox BorderBrush="Transparent">
@@ -546,7 +544,7 @@
             ShowMask="False"
             ShowMode="Cover">
             <Border
-                Width="600"
+                Width="400"
                 Background="{DynamicResource RegionBrush}"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,1,0,0">
@@ -635,12 +633,9 @@
                 Style="{StaticResource ButtonInfo}" />
             <hc:TransitioningContentControl TransitionMode="Left2Right">
                 <hc:FlexPanel x:Name="RunPanel" Visibility="Collapsed">
-                    <hc:ComboBox>
+                    <hc:ComboBox x:Name="RunProfilesComboBox" SelectionChanged="RunProfilesComboBox_SelectionChanged">
                         <ComboBoxItem>
                             Current File
-                        </ComboBoxItem>
-                        <ComboBoxItem>
-                            Profile 1
                         </ComboBoxItem>
                     </hc:ComboBox>
                     <Button

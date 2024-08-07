@@ -53,6 +53,10 @@ public partial class MainWindow : Window
 #pragma warning disable CA1806 // 不要忽略方法结果
         new LightTip(this);
 #pragma warning restore CA1806 // 不要忽略方法结果
+        foreach (var item in GlobalConfig.CurrentProfiles)
+        {
+            RunProfilesComboBox.Items.Add(item.Name);
+        }
     }
 
     private void TextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -158,6 +162,11 @@ public partial class MainWindow : Window
             FileSavingIcon.Foreground = (Brush)Application.Current.Resources["DangerBrush"];
             FileSavingIcon.Text = "\xe685";
         }
+    }
+
+    private void RunProfilesComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        GlobalConfig.CurrentRunProfile = GlobalConfig.CurrentProfiles[RunProfilesComboBox.SelectedIndex - 1];
     }
 }
 
