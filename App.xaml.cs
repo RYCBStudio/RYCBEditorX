@@ -20,10 +20,11 @@ public partial class App : PrismApplication
 {
     private Splash Splash;
 
-    public const string VERSION = "1.0.0";
+    public const string VERSION = "1.0.0-rc1";
     public const string MAJOR_VERSION = "1";
     public const string MINOR_VERSION = "0";
     public const string MICRO_VERSION = "0";
+    public const string REVISION_NUMBER = "rc1";
     public static DateTime BUILD_TIME;
     public static LocalizationService LocalizationService
     {

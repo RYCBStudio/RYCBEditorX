@@ -198,7 +198,7 @@ public partial class MainWindowViewModel : BindableBase
                 FileName = App.STARTUP_PATH + "\\Tools\\Runner.exe",
                 UseShellExecute = false,
             }
-        }; 
+        };
         Process runner_proc_protecter = new()
         {
             StartInfo = new()
@@ -389,6 +389,17 @@ public partial class MainWindowViewModel : BindableBase
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),
                 FontSize = GlobalConfig.Editor.FontSize,
             };
+            if (GlobalConfig.Skin == "dark")
+            {
+                testTextEditorExMd.Background = (Brush)Application.Current.Resources["DarkBackGround"];
+                testTextEditorExMd.Foreground = (Brush)Application.Current.Resources["LightBackGround"];
+            }
+            else
+            {
+                testTextEditorExMd.Foreground = (Brush)Application.Current.Resources["DarkBackGround"];
+                testTextEditorExMd.Background = (Brush)Application.Current.Resources["LightBackGround"];
+            }
+            testTextEditorExMd.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
             grid.Children.Add(testTextEditorExMd);
             testTextEditorExMd.Load(filename);
             var testTextEditorExHTML = new TestTextEditorEx()
@@ -399,6 +410,17 @@ public partial class MainWindowViewModel : BindableBase
             };
             grid.Children.Add(testTextEditorExHTML);
             testTextEditorExHTML.SetValue(Grid.ColumnProperty, 1);
+            if (GlobalConfig.Skin == "dark")
+            {
+                testTextEditorExHTML.Background = (Brush)Application.Current.Resources["DarkBackGround"];
+                testTextEditorExHTML.Foreground = (Brush)Application.Current.Resources["LightBackGround"];
+            }
+            else
+            {
+                testTextEditorExHTML.Foreground = (Brush)Application.Current.Resources["DarkBackGround"];
+                testTextEditorExHTML.Background = (Brush)Application.Current.Resources["LightBackGround"];
+            }
+            testTextEditorExHTML.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
             var resourceName = GlobalConfig.XshdFilePath + $"\\{GlobalConfig.Editor.Theme}\\HTML.xshd";
             using (Stream s = new FileStream(resourceName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
             {
@@ -456,6 +478,21 @@ public partial class MainWindowViewModel : BindableBase
                 testTextEditorEx.Background = (Brush)Application.Current.Resources["LightBackGround"];
             }
             testTextEditorEx.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
+            var cm = new ContextMenu();
+            foreach (MenuItem item in MainWindow.Instance.EditMenu.Items)
+            {
+                cm.Items.Add(new MenuItem()
+                {
+                    Style = item.Style,
+                    InputGestureText = item.InputGestureText,
+                    Header = item.Header,
+                    Command = item.Command,
+                    FontFamily = item.FontFamily,
+                    FontSize = item.FontSize,
+                    Icon = item.Icon,
+                });
+            }
+            testTextEditorEx.ContextMenu = cm;
             var tabItem = new TabItem
             {
                 ToolTip = filename,

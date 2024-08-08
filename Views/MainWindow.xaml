@@ -7,6 +7,7 @@
     xmlns:ctrlex="clr-namespace:RYCBEditorX.ControlEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:RYCBEditorX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:utils="clr-namespace:RYCBEditorX.Utils;assembly=RYCBEditorX.Utils"
@@ -158,7 +159,10 @@
                 </MenuItem>
                 <MenuItem Command="{Binding SaveAsCmd}" Header="{DynamicResource Main.Menu.File.SaveAs}" />
             </MenuItem>
-            <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Edit}">
+            <MenuItem
+                x:Name="EditMenu"
+                FontSize="12"
+                Header="{DynamicResource Main.Menu.Edit}">
                 <MenuItem
                     Command="{Binding UndoCmd}"
                     Header="{DynamicResource Main.Menu.Edit.Undo}"
@@ -391,11 +395,18 @@
                 x:Name="StructureTreeToggleButton"
                 HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
-                Click="NotificationToggleButton_Click"
                 Content="&#xe6e7;"
                 FontFamily="{StaticResource iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=StructTreeDrawer}" />
+            <ToggleButton
+                x:Name="PylintToggleButton"
+                HorizontalAlignment="Stretch"
+                BorderBrush="Transparent"
+                Content="&#xe832;"
+                FontFamily="{StaticResource iconfont}"
+                FontSize="16"
+                IsChecked="{Binding IsOpen, ElementName=PylintDrawer}" />
         </hc:SimpleStackPanel>
         <hc:Drawer
             x:Name="NotificationDrawer"
@@ -572,6 +583,37 @@
                         Background="Transparent"
                         Foreground="{DynamicResource PrimaryBrush}"
                         Style="{StaticResource BaseStyle}" />
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <hc:Drawer
+            x:Name="PylintDrawer"
+            Dock="Right"
+            ShowMode="Cover">
+            <Border
+                Width="300"
+                Background="{DynamicResource RegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource TextBlockTitle}"
+                            Text="{DynamicResource Main.SideBar.Pylint.Title}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                            Command="hc:ControlCommands.Close"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
+                            Style="{StaticResource ButtonIcon}" />
+                    </DockPanel>
+                    <local:PylintSettings Grid.Row="1" />
                 </Grid>
             </Border>
         </hc:Drawer>
