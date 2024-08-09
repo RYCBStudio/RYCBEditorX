@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX", "RYCBEditorX.
 	ProjectSection(ProjectDependencies) = postProject
 		{3192145E-EE32-414B-ABBE-340D0F8DBAE7} = {3192145E-EE32-414B-ABBE-340D0F8DBAE7}
 		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D} = {7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}
+		{FE25DED2-540C-4423-A38F-74C90386C6CF} = {FE25DED2-540C-4423-A38F-74C90386C6CF}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.API", "..\RYCBEditorX.API\RYCBEditorX.API.csproj", "{38BFC5BE-3987-4CE9-A7B1-B823CA35E8B7}"
@@ -17,6 +18,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Dialogs", "..\R
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Utils", "..\RYCBEditorX.Utils\RYCBEditorX.Utils.csproj", "{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RYCBEditorX.MySQL", "..\RYCBEditorX.MySQL\RYCBEditorX.MySQL.csproj", "{FE25DED2-540C-4423-A38F-74C90386C6CF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D} = {7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +46,10 @@ Global
 		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

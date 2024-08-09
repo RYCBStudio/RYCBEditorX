@@ -110,7 +110,7 @@ public partial class App : PrismApplication
         GlobalConfig.LocalizationService = LocalizationService;
         GlobalConfig.MaximumFileSize = int.Parse(AppSettings.Settings["MaximumFileSize"].Value);
         GlobalConfig.StartupPath = STARTUP_PATH;
-        GlobalConfig.LOGGER = LOGGER;
+        GlobalConfig.CurrentLogger = LOGGER;
         GlobalConfig.Resources = Resources;
         GlobalConfig.LocalizationString = AppSettings.Settings["Language"].Value;
 
@@ -185,6 +185,8 @@ public partial class App : PrismApplication
     }
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
+        LOGGER.Log("加载 MySQL 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
+        moduleCatalog.AddModule<MySQL.MySQLModule>();
         LOGGER.Log("加载 Dialog 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
         moduleCatalog.AddModule<Dialogs.DialogsModule>();
         LOGGER.Log("加载 Utils 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");

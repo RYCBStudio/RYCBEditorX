@@ -48,7 +48,7 @@ public partial class MainWindow : Window
         //    DataContext = new FluentMessageBoxViewModel()
         //    {
         //        Title = "Test",
-        //        Message = App.AppSettings.Settings["Test"].Value,
+        //        Message = App.AppSettings.Settings["Test"].OrderBy_Value,
         //    },
         //}.ShowDialog();
 #pragma warning disable CA1806 // 不要忽略方法结果
