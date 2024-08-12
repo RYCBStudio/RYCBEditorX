@@ -14,11 +14,9 @@ using ICSharpCode.AvalonEdit;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using RYCBEditorX.Dialogs.Views;
-using ICSharpCode.AvalonEdit.Search;
 using RYCBEditorX.Dialogs.ViewModels;
 using RYCBEditorX.Utils;
 using Microsoft.Web.WebView2.Wpf;
-using System.Threading.Tasks;
 using Markdig;
 using System.Collections.Generic;
 
@@ -222,6 +220,11 @@ public partial class MainWindowViewModel : BindableBase
 
     internal void Stop()
     {
+        if (_runnerProc is null)
+        {
+            return;
+        }
+
         Process p = new()
         {
             StartInfo = new()
@@ -383,7 +386,7 @@ public partial class MainWindowViewModel : BindableBase
                 }
             };
             grid.ShowGridLines = true;
-            var testTextEditorExMd = new TestTextEditorEx()
+            var testTextEditorExMd = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),
@@ -402,7 +405,7 @@ public partial class MainWindowViewModel : BindableBase
             testTextEditorExMd.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
             grid.Children.Add(testTextEditorExMd);
             testTextEditorExMd.Load(filename);
-            var testTextEditorExHTML = new TestTextEditorEx()
+            var testTextEditorExHTML = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),
@@ -429,7 +432,7 @@ public partial class MainWindowViewModel : BindableBase
                 testTextEditorExHTML.SyntaxHighlighting = HighlightingLoader.Load(xshd, HighlightingManager.Instance);
             }
             WebView2 webView = new();
-            TabItem tabItem = new TabItem();
+            var tabItem = new TabItem();
             grid.Children.Add(webView);
             webView.SetValue(Grid.ColumnProperty, 2);
             tabItem = new TabItem
@@ -461,7 +464,7 @@ public partial class MainWindowViewModel : BindableBase
             var tmp = new FileInfo(filename);
             var fileSize = tmp.Length;
             tmp = null;
-            var testTextEditorEx = new TestTextEditorEx()
+            var testTextEditorEx = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),

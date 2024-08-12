@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace RYCBEditorX.AvalonEditEx;

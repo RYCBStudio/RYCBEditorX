@@ -11,6 +11,7 @@ using System.Windows.Media;
 using Microsoft.TeamFoundation.Common;
 using System.Diagnostics;
 using System.IO;
+using RYCBEditorX.ViewModels;
 
 namespace RYCBEditorX;
 /// <summary>
@@ -49,6 +50,7 @@ public partial class App : PrismApplication
 
     protected override void Initialize()
     {
+        SplashViewModel svm = new();
         Splash = new Splash();
         LOGGER = new(STARTUP_PATH + "\\Logs\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
         LOGGER.Log("初始化...");
@@ -66,7 +68,6 @@ public partial class App : PrismApplication
     {
         LOGGER.Log("加载本地化资源...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:本地化");
         LocalizationService = new LocalizationService(STARTUP_PATH + $"\\Languages\\{GlobalConfig.LocalizationString}.json");
-
         // 将本地化字符串存入资源字典
         UpdateResources();
     }

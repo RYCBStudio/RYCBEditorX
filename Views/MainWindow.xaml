@@ -407,6 +407,14 @@
                 FontFamily="{StaticResource iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=PylintDrawer}" />
+            <ToggleButton
+                x:Name="WikiToggleButton"
+                HorizontalAlignment="Stretch"
+                BorderBrush="Transparent"
+                Content="&#xe621;"
+                FontFamily="{StaticResource iconfont}"
+                FontSize="16"
+                IsChecked="{Binding IsOpen, ElementName=WikiDrawer}" />
         </hc:SimpleStackPanel>
         <hc:Drawer
             x:Name="NotificationDrawer"
@@ -583,6 +591,38 @@
                         Background="Transparent"
                         Foreground="{DynamicResource PrimaryBrush}"
                         Style="{StaticResource BaseStyle}" />
+                </Grid>
+            </Border>
+        </hc:Drawer>
+        <hc:Drawer
+            x:Name="WikiDrawer"
+            Dock="Right"
+            MaskCanClose="False"
+            ShowMode="Cover">
+            <Border
+                Width="300"
+                Background="{DynamicResource RegionBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource TextBlockTitle}"
+                            Text="{DynamicResource Main.SideBar.Wiki.Title}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"
+                            Command="hc:ControlCommands.Close"
+                            Foreground="{DynamicResource PrimaryTextBrush}"
+                            Style="{StaticResource ButtonIcon}" />
+                    </DockPanel>
+                    <local:Wiki Grid.Row="1" />
                 </Grid>
             </Border>
         </hc:Drawer>

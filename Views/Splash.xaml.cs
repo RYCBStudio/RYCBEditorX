@@ -8,9 +8,12 @@ namespace RYCBEditorX.Views;
 /// </summary>
 public partial class Splash : Window
 {
+    public static Splash Instance { get; private set; }
+
     public Splash()
     {
         InitializeComponent();
+        Instance = this;
     }
 
     private void FontSizeChange()
