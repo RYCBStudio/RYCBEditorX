@@ -14,7 +14,7 @@
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
     mc:Ignorable="d">
     <Window.Resources>
-        <FontFamily x:Key="iconfont">
+        <FontFamily x:Key="Iconfont">
             /RYCBEditorX;component/Assets/Fonts/#ali-ifont
         </FontFamily>
     </Window.Resources>
@@ -58,7 +58,7 @@
             Margin="20,0,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            FontFamily="{StaticResource iconfont}"
+            FontFamily="{StaticResource Iconfont}"
             FontSize="56"
             Text="&#xea0a;" />
         <TextBlock

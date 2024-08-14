@@ -11,15 +11,19 @@ using System.Windows.Media;
 using Microsoft.TeamFoundation.Common;
 using System.Diagnostics;
 using System.IO;
-using RYCBEditorX.ViewModels;
+using System.Threading;
+using System.Globalization;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace RYCBEditorX;
+#pragma warning disable IDE0059 // 不需要赋值
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
 public partial class App : PrismApplication
 {
-    private Splash Splash;
+
+    private Splash splash;
 
     public const string VERSION = "1.0.0-rc1";
     public const string MAJOR_VERSION = "1";
@@ -48,19 +52,38 @@ public partial class App : PrismApplication
         get; private set;
     }
 
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        GlobalWindows.ActivatingWindows = [];
+        GlobalConfig.LocalizationString = CultureInfo.CurrentCulture.Name;
+        Thread t = new Thread(() =>
+        {
+            splash = new();
+            splash.ShowDialog();//不能用Show
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 0));
+        });
+        t.SetApartmentState(ApartmentState.STA);//设置单线程
+        t.Start();
+        base.OnStartup(e);
+    }
+
     protected override void Initialize()
     {
-        SplashViewModel svm = new();
-        Splash = new Splash();
         LOGGER = new(STARTUP_PATH + "\\Logs\\" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
         LOGGER.Log("初始化...");
-        this.Dispatcher.Invoke(Splash.Show);
-        LoadExceptionCaptures();
-        GlobalWindows.ActivatingWindows = [];
-        GlobalWindows.ActivatingWindows.Add(Splash);
-        GlobalWindows.ActivatingWindows.Add(MainWindow);
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 1));
         LoadConfig();
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 2));
+        LoadExceptionCaptures();
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 3));
+        GlobalWindows.ActivatingWindows.Add(MainWindow);
         LoadLocalization();
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 4));
         base.Initialize();
     }
 
@@ -83,7 +106,7 @@ public partial class App : PrismApplication
     private void RefreshItems()
     {
         GlobalConfig.CurrentProfiles = [];
-        foreach (var item in Directory.EnumerateFiles(STARTUP_PATH+"\\Profiles\\Runners"))
+        foreach (var item in Directory.EnumerateFiles(STARTUP_PATH + "\\Profiles\\Runners"))
         {
             var icbfp = new ICBFileProcessor(item);
             GlobalConfig.RunProfile rp = new()
@@ -107,6 +130,8 @@ public partial class App : PrismApplication
         AppSettings = AppConfiguration.AppSettings;
 
         BUILD_TIME = DateTime.Now;
+        GlobalConfig.Version = $"{MAJOR_VERSION}.{MINOR_VERSION}.{MICRO_VERSION}";
+        GlobalConfig.Revision = REVISION_NUMBER;
         GlobalConfig.XshdFilePath = AppSettings.Settings["XshdFilePath"].Value;
         GlobalConfig.LocalizationService = LocalizationService;
         GlobalConfig.MaximumFileSize = int.Parse(AppSettings.Settings["MaximumFileSize"].Value);
@@ -135,6 +160,9 @@ public partial class App : PrismApplication
         GlobalConfig.Editor.ShowLineNumber = bool.Parse(AppSettings.Settings["Editor.ShowLineNum"].Value);
         GlobalConfig.Editor.FontFamilyName = AppSettings.Settings["Editor.FontName"].Value;
         GlobalConfig.Editor.FontSize = Convert.ToInt32(AppSettings.Settings["Editor.FontSize"].Value);
+
+        LOGGER.Log("载入代码模板", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
+        GlobalConfig.CodeTemplates.AddRange(Custom.TemplateAnalyser.GetCodeImplements(STARTUP_PATH + "\\Profiles\\Templates\\python\\builtin.json"));
     }
 
     private void UpdataResourceDictionary(string resourceStr, int pos)
@@ -153,12 +181,14 @@ public partial class App : PrismApplication
     #region Prism Application
     protected override void OnInitialized()
     {
-        Splash.Close();
+        splash.Dispatcher.Invoke(splash.Close);
         base.OnInitialized();
     }
 
     protected override Window CreateShell()
     {
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 6));
         return Container.Resolve<MainWindow>();
     }
 
@@ -171,7 +201,7 @@ public partial class App : PrismApplication
     {
         foreach (var item in GlobalWindows.ActivatingWindows)
         {
-            item.Close();
+            item?.Close();
         }
         Process.Start(new ProcessStartInfo()
         {
@@ -186,6 +216,8 @@ public partial class App : PrismApplication
     }
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
+        splash.Dispatcher.Invoke(
+            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 5));
         LOGGER.Log("加载 MySQL 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");
         moduleCatalog.AddModule<MySQL.MySQLModule>();
         LOGGER.Log("加载 Dialog 模块...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:模块");

@@ -20,10 +20,11 @@
     Closed="Window_Closed"
     Closing="Window_Closing"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
+    Loaded="Window_Loaded"
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <FontFamily x:Key="iconfont">
+        <FontFamily x:Key="Iconfont">
             /RYCBEditorX;component/Assets/Fonts/#ali-ifont
         </FontFamily>
         <Style
@@ -42,7 +43,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <utils:FileSavingTipConverter x:Key="fstc" />
+        <utils:FileSavingTipConverter x:Key="Fstc" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding
@@ -103,12 +104,15 @@
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
-        <Menu x:Name="MainMenu" Grid.ColumnSpan="2">
+        <Menu
+            x:Name="MainMenu"
+            Grid.ColumnSpan="2"
+            Background="Transparent">
             <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.File}">
                 <MenuItem Header="{DynamicResource Main.Menu.File.New}">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe864;" />
                     </MenuItem.Icon>
@@ -118,7 +122,7 @@
                         InputGestureText="Ctrl+N">
                         <MenuItem.Icon>
                             <TextBlock
-                                FontFamily="{StaticResource iconfont}"
+                                FontFamily="{StaticResource Iconfont}"
                                 FontSize="15"
                                 Text="&#xe671;" />
                         </MenuItem.Icon>
@@ -129,7 +133,7 @@
                         InputGestureText="Ctrl+P">
                         <MenuItem.Icon>
                             <TextBlock
-                                FontFamily="{StaticResource iconfont}"
+                                FontFamily="{StaticResource Iconfont}"
                                 FontSize="15"
                                 Text="&#xe63d;" />
                         </MenuItem.Icon>
@@ -141,7 +145,7 @@
                     InputGestureText="Ctrl+O">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe670;" />
                     </MenuItem.Icon>
@@ -152,7 +156,7 @@
                     InputGestureText="Ctrl+S">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe67c;" />
                     </MenuItem.Icon>
@@ -170,7 +174,7 @@
                     Tag="Undo">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe739;" />
                     </MenuItem.Icon>
@@ -182,7 +186,7 @@
                     Tag="Redo">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe63a;" />
                     </MenuItem.Icon>
@@ -194,7 +198,7 @@
                     Tag="Cut">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe839;" />
                     </MenuItem.Icon>
@@ -206,7 +210,7 @@
                     Tag="Paste">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe642;" />
                     </MenuItem.Icon>
@@ -218,7 +222,7 @@
                     Tag="Copy">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe706;" />
                     </MenuItem.Icon>
@@ -230,7 +234,7 @@
                     Tag="csl">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xed53;" />
                     </MenuItem.Icon>
@@ -242,7 +246,7 @@
                     Tag="usl">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xf9a5;" />
                     </MenuItem.Icon>
@@ -254,7 +258,7 @@
                     Tag="gl">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe602;" />
                     </MenuItem.Icon>
@@ -264,7 +268,7 @@
                 <MenuItem Header="{DynamicResource Main.Menu.Options.Settings}" InputGestureText="Ctrl+Alt+S">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="20"
                             Text="&#xe699;" />
                     </MenuItem.Icon>
@@ -281,17 +285,17 @@
                     </MenuItem>
                     <MenuItem Click="ThrowEx_Click" Header="{DynamicResource Main.Menu.Tools.App.ThrowEx}" />
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main.Menu.Tools.packagemgmt}">
+                <MenuItem Header="{DynamicResource Main.Menu.Tools.Packagemgmt}">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xecd2;" />
                     </MenuItem.Icon>
                     <MenuItem Command="{Binding PythonPkgMgmtCmd}" Header="_Python">
                         <MenuItem.Icon>
                             <TextBlock
-                                FontFamily="{StaticResource iconfont}"
+                                FontFamily="{StaticResource Iconfont}"
                                 FontSize="15"
                                 Text="&#xe690;" />
                         </MenuItem.Icon>
@@ -304,25 +308,26 @@
                 <MenuItem Command="{Binding AboutCmd}" Header="{DynamicResource Main.Menu.Help.About}">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe600;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main.Menu.Help.LC}">
+                <MenuItem Header="{DynamicResource Main.Menu.Help.Lc}">
                     <MenuItem.Icon>
                         <TextBlock
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="15"
                             Text="&#xe6d2;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main.Menu.Help.tbox}" />
+                <MenuItem Header="{DynamicResource Main.Menu.Help.Tbox}" />
             </MenuItem>
         </Menu>
         <TabControl
             x:Name="MainTabCtrl"
             Grid.Row="2"
+            BorderBrush="{x:Null}"
             IsSynchronizedWithCurrentItem="True" />
         <TabControl
             x:Name="BottomTabCtrl"
@@ -345,7 +350,7 @@
                 <ListBox BorderBrush="Transparent">
                     <ListBoxItem>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="{StaticResource iconfont}" Text="&#xe609;" />
+                            <TextBlock FontFamily="{StaticResource Iconfont}" Text="&#xe609;" />
                             <TextBlock Margin="1,0,0,7" Text="C#" />
                             <TextBlock Margin="20,0,0,7" Text="X:\xxx\highlightings\xxx.xshd" />
                         </StackPanel>
@@ -353,7 +358,7 @@
                     <ListBoxItem>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                FontFamily="{StaticResource iconfont}"
+                                FontFamily="{StaticResource Iconfont}"
                                 FontSize="14"
                                 Text="&#xe690;" />
                             <TextBlock Margin="1,0,0,7" Text="Python" />
@@ -379,7 +384,7 @@
                     BorderBrush="Transparent"
                     Click="NotificationToggleButton_Click"
                     Content="&#xe679;"
-                    FontFamily="{StaticResource iconfont}"
+                    FontFamily="{StaticResource Iconfont}"
                     FontSize="16"
                     IsChecked="{Binding IsOpen, ElementName=NotificationDrawer}" />
             </hc:Badge>
@@ -388,7 +393,7 @@
                 HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
                 Content="&#xe63d;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=ProjectDrawer}" />
             <ToggleButton
@@ -396,7 +401,7 @@
                 HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
                 Content="&#xe6e7;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=StructTreeDrawer}" />
             <ToggleButton
@@ -404,7 +409,7 @@
                 HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
                 Content="&#xe832;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=PylintDrawer}" />
             <ToggleButton
@@ -412,7 +417,7 @@
                 HorizontalAlignment="Stretch"
                 BorderBrush="Transparent"
                 Content="&#xe621;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 FontSize="16"
                 IsChecked="{Binding IsOpen, ElementName=WikiDrawer}" />
         </hc:SimpleStackPanel>
@@ -455,7 +460,7 @@
                                     <TextBlock
                                         x:Name="Icon"
                                         DockPanel.Dock="Left"
-                                        FontFamily="{StaticResource iconfont}"
+                                        FontFamily="{StaticResource Iconfont}"
                                         FontSize="28"
                                         Foreground="{Binding IconBrush}"
                                         Text="{Binding Icon}" />
@@ -480,7 +485,7 @@
                             BorderBrush="Transparent"
                             Click="BtnClearSelected_Click"
                             Content="&#xe631;"
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="16"
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             ToolTip="Clear Selected"
@@ -491,7 +496,7 @@
                             BorderBrush="Transparent"
                             Click="BtnClearAll_Click"
                             Content="&#xe628;"
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="16"
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             ToolTip="Clear All" />
@@ -537,7 +542,7 @@
                                     <TextBlock
                                         x:Name="Icon"
                                         DockPanel.Dock="Left"
-                                        FontFamily="{StaticResource iconfont}"
+                                        FontFamily="{StaticResource Iconfont}"
                                         FontSize="28"
                                         Foreground="{Binding IconBrush}"
                                         Text="{Binding Icon}" />
@@ -598,6 +603,7 @@
             x:Name="WikiDrawer"
             Dock="Right"
             MaskCanClose="False"
+            ShowMask="False"
             ShowMode="Cover">
             <Border
                 Width="300"
@@ -659,12 +665,13 @@
         </hc:Drawer>
         <DockPanel Grid.Row="4" Grid.ColumnSpan="2">
             <StatusBar
-                x:Name="sbar"
+                x:Name="Sbar"
                 Grid.Row="3"
-                HorizontalAlignment="Stretch">
+                HorizontalAlignment="Stretch"
+                BorderBrush="{x:Null}">
                 <StatusBarItem HorizontalAlignment="Right" DockPanel.Dock="Right">
                     <Button
-                        x:Name="BtnSelectHLProfile"
+                        x:Name="BtnSelectHlProfile"
                         BorderBrush="Transparent"
                         Click="BtnSelectHLProfile_Click"
                         Content="  Python  " />
@@ -680,7 +687,7 @@
                         Visibility="Hidden">
                         <TextBlock
                             x:Name="FileSavingIcon"
-                            FontFamily="{StaticResource iconfont}"
+                            FontFamily="{StaticResource Iconfont}"
                             FontSize="20"
                             Foreground="{StaticResource SuccessBrush}"
                             Text="&#xe860;" />
@@ -705,12 +712,15 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-        <ToolBar Grid.Row="1" Height="auto">
+        <ToolBar
+            Grid.Row="1"
+            Height="auto"
+            Background="Transparent">
             <Button
                 Margin="2.5,0,2.5,0"
                 Command="{Binding RunCmd}"
                 Content="&#xe65d;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 FontSize="15"
                 Style="{StaticResource ButtonInfo}" />
             <hc:TransitioningContentControl TransitionMode="Left2Right">
@@ -724,7 +734,7 @@
                         Margin="2.5,0,2.5,0"
                         Command="{Binding ConfigRunProfilesCmd}"
                         Content="&#xe66e;"
-                        FontFamily="{StaticResource iconfont}"
+                        FontFamily="{StaticResource Iconfont}"
                         FontSize="18"
                         Style="{StaticResource ButtonDashed}" />
                 </hc:FlexPanel>
@@ -733,13 +743,13 @@
                 Margin="2.5,0,2.5,0"
                 Command="{Binding StopCmd}"
                 Content="&#xea89;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 Style="{StaticResource ButtonDanger}" />
             <Button
                 Margin="2.5,0,2.5,0"
                 Command="{Binding DebugCmd}"
                 Content="&#xe606;"
-                FontFamily="{StaticResource iconfont}"
+                FontFamily="{StaticResource Iconfont}"
                 Style="{StaticResource ButtonWarning}" />
             <hc:TransitioningContentControl TransitionMode="Left2Right">
                 <hc:FlexPanel x:Name="DebugPanel" Visibility="Collapsed">
@@ -747,19 +757,19 @@
                         Margin="2.5,0,2.5,0"
                         Command="{Binding StepInCmd}"
                         Content="&#xe855;"
-                        FontFamily="{StaticResource iconfont}"
+                        FontFamily="{StaticResource Iconfont}"
                         Style="{StaticResource ButtonDashed}" />
                     <Button
                         Margin="2.5,0,2.5,0"
                         Command="{Binding StepPassCmd}"
                         Content="&#xe854;"
-                        FontFamily="{StaticResource iconfont}"
+                        FontFamily="{StaticResource Iconfont}"
                         Style="{StaticResource ButtonDashed}" />
                     <Button
                         Margin="2.5,0,2.5,0"
                         Command="{Binding StepOutCmd}"
                         Content="&#xe853;"
-                        FontFamily="{StaticResource iconfont}"
+                        FontFamily="{StaticResource Iconfont}"
                         Style="{StaticResource ButtonDashed}" />
                 </hc:FlexPanel>
             </hc:TransitioningContentControl>

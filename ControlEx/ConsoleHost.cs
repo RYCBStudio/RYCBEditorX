@@ -26,9 +26,11 @@ public class ConsoleHost : UserControl
         _consoleWriter = _consoleProcess.StandardInput;
 
         // 创建 TextBox 用于显示控制台输出
-        var consoleTextBox = new TextBox();
-        consoleTextBox.IsReadOnly = true;
-        consoleTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        var consoleTextBox = new TextBox
+        {
+            IsReadOnly = true,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
         consoleTextBox.TextChanged += ConsoleTextBox_TextChanged;
 
         // 将 TextBox 添加到 UserControl 中

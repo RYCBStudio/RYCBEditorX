@@ -157,6 +157,11 @@ public partial class MainWindow : Window
             FileSavingIcon.Foreground = (Brush)Application.Current.Resources["SuccessBrush"];
             FileSavingIcon.Text = "\xe860";
         }
+        else if (FileSavingTip.Text == Application.Current.Resources["Main.Bottom.FileSavingTip.Waiting"].ToString())
+        {
+            FileSavingIcon.Foreground = (Brush)Application.Current.Resources["WarningBrush"];
+            FileSavingIcon.Text = "\xe63e";
+        }
         else
         {
             FileSavingIcon.Foreground = (Brush)Application.Current.Resources["DangerBrush"];
@@ -167,6 +172,11 @@ public partial class MainWindow : Window
     private void RunProfilesComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         GlobalConfig.CurrentRunProfile = GlobalConfig.CurrentProfiles[RunProfilesComboBox.SelectedIndex - 1];
+    }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        Focus();
     }
 }
 
