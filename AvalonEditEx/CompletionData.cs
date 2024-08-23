@@ -39,11 +39,13 @@ public class CompletionData(string text, CompletionDataType type, string templat
     public void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
     {
         if (completionSegment == null)
+        {
             return;
+        }
 
         // 获取用户输入的起始位置和结束位置
-        int startOffset = completionSegment.Offset;
-        int endOffset = completionSegment.EndOffset;
+        var startOffset = completionSegment.Offset;
+        var endOffset = completionSegment.EndOffset;
 
         // 获取要替换的内容
         string replacementText;

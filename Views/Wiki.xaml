@@ -10,152 +10,153 @@
     xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     d:DesignHeight="1000"
     d:DesignWidth="300"
+    FontFamily="{DynamicResource Main}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <FontFamily x:Key="Iconfont">/RYCBEditorX;component/Assets/Fonts/#ali-ifont</FontFamily>
         <FontFamily x:Key="Jbm">/RYCBEditorX;component/Assets/Fonts/#Jetbrains Mono</FontFamily>
     </UserControl.Resources>
-    <hc:ScrollViewer>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="9*" />
-            </Grid.RowDefinitions>
-            <hc:FlexPanel HorizontalAlignment="Center">
-                <TextBlock
-                    x:Name="HeaderIcon"
-                    FontFamily="{StaticResource Iconfont}"
-                    FontSize="30"
-                    Style="{StaticResource TextBlockBaseStyle}"
-                    Text="&#xe629;" />
-                <TextBlock
-                    x:Name="Header"
-                    Margin="5,0,0,0"
-                    FontFamily="{StaticResource Jbm}"
-                    FontSize="25"
-                    FontWeight="Bold"
-                    Style="{StaticResource TextBlockBaseStyle}"
-                    Text="keyword" />
-            </hc:FlexPanel>
-            <hc:Divider
-                Grid.Row="1"
-                Margin="0,10,0,0"
-                LineStroke="#FF5D5D5D"
-                LineStrokeThickness="2.5" />
-            <Grid Grid.Row="2">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Button x:Name="LoadBtn" Click="Button_Click">Load</Button>
+        <hc:ScrollViewer x:Name="Main" Grid.Row="1">
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="9*" />
                 </Grid.RowDefinitions>
                 <hc:FlexPanel HorizontalAlignment="Center">
                     <TextBlock
+                        x:Name="HeaderIcon"
                         FontFamily="{StaticResource Iconfont}"
-                        FontSize="25"
+                        FontSize="30"
                         Style="{StaticResource TextBlockBaseStyle}"
-                        Text="&#xeb66;" />
-                    <TextBlock
+                        Text="&#xe629;" />
+                    <TextBox
+                        x:Name="Header"
+                        TextChanged="Header_TextChanged"
                         Margin="5,0,0,0"
-                        FontSize="18"
-                        Style="{StaticResource TextBlockBoldBaseStyle}"
-                        Text="{DynamicResource Wiki.Doc}" />
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        FontFamily="{StaticResource Jbm}"
+                        FontSize="25"
+                        FontWeight="Bold"
+                        IsReadOnly="True"
+                        Style="{StaticResource TextBoxBaseStyle}" />
                 </hc:FlexPanel>
-                <wpf:WebView2
-                    x:Name="Wv"
+                <hc:Divider
                     Grid.Row="1"
-                    Width="300"
-                    Height="200"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top" />
-            </Grid>
-            <hc:SimpleStackPanel Grid.Row="3">
-                <hc:FlexPanel HorizontalAlignment="Center">
-                    <TextBlock
-                        FontFamily="{StaticResource Iconfont}"
-                        FontSize="25"
-                        Style="{StaticResource TextBlockBaseStyle}"
-                        Text="&#xe60c;" />
-                    <TextBlock
-                        Margin="5,0,0,0"
-                        FontSize="18"
-                        Style="{StaticResource TextBlockBoldBaseStyle}"
-                        Text="Comments" />
-                </hc:FlexPanel>
-                <ListBox x:Name="CommentsListBox">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    Style="{StaticResource TextBlockBoldBaseStyle}"
-                                    Text="{Binding User}" />
-                                <TextBox
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Right"
-                                    Background="Transparent"
-                                    BorderBrush="Transparent"
-                                    Foreground="Gray"
-                                    IsReadOnly="True"
-                                    Text="{Binding Uid}" />
-                                <md:MarkdownScrollViewer
-                                    Grid.Row="2"
-                                    Foreground="{StaticResource PrimaryTextBrush}"
-                                    Markdown="{Binding CommentText}" />
-                                <hc:FlexPanel
-                                    Grid.Row="3"
-                                    HorizontalAlignment="Right"
-                                    Background="Transparent">
-                                    <Label Content="{Binding Time}" />
-                                    <Button
+                    Margin="0,10,0,0"
+                    LineStroke="#FF5D5D5D"
+                    LineStrokeThickness="2.5" />
+                <hc:SimpleStackPanel Grid.Row="3">
+                    <hc:FlexPanel HorizontalAlignment="Center">
+                        <TextBlock
+                            FontFamily="{StaticResource Iconfont}"
+                            FontSize="25"
+                            Style="{StaticResource TextBlockBaseStyle}"
+                            Text="&#xe60c;" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Style="{StaticResource TextBlockBoldBaseStyle}"
+                            Text="Comments" />
+                    </hc:FlexPanel>
+                    <ListBox x:Name="CommentsListBox">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock
+                                        HorizontalAlignment="Left"
+                                        Style="{StaticResource TextBlockBoldBaseStyle}"
+                                        Text="{Binding User}" />
+                                    <TextBox
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Right"
                                         Background="Transparent"
                                         BorderBrush="Transparent"
-                                        Content="&#xe62a;"
-                                        FontFamily="{StaticResource Iconfont}" />
-                                    <Label Content="{Binding Likes}" />
-                                </hc:FlexPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <TextBox
-                    Width="300"
-                    Height="100"
-                    MaxHeight="300"
-                    HorizontalContentAlignment="Left"
-                    VerticalContentAlignment="Top"
-                    hc:InfoElement.Placeholder="{DynamicResource Wiki.Comment.Watermark}"
-                    AcceptsReturn="True"
-                    TextWrapping="Wrap" />
-                <Button
-                    HorizontalAlignment="Right"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Content="&#xea9e;"
-                    FontFamily="{StaticResource Iconfont}"
-                    FontSize="20" />
-            </hc:SimpleStackPanel>
-            <hc:LoadingCircle
-                x:Name="Loading"
-                Grid.RowSpan="11"
-                Width="150"
-                Height="150"
-                DotCount="5"
-                DotDiameter="12.5"
-                Visibility="Visible" />
-        </Grid>
-    </hc:ScrollViewer>
+                                        Foreground="Gray"
+                                        IsReadOnly="True"
+                                        Text="{Binding Uid}" />
+                                    <md:MarkdownScrollViewer
+                                        Grid.Row="2"
+                                        Foreground="{StaticResource PrimaryTextBrush}"
+                                        Markdown="{Binding CommentText}" />
+                                    <hc:FlexPanel
+                                        Grid.Row="3"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent">
+                                        <Label Content="{Binding Time}" />
+                                        <ToggleButton
+                                            Checked="CheckedLikes"
+                                            Content="&#xe62a;"
+                                            FontFamily="{StaticResource Iconfont}"
+                                            Style="{StaticResource ToggleButtonDefault}"
+                                            Tag="{Binding}" />
+                                        <Label Content="{Binding Likes}" />
+                                    </hc:FlexPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBox
+                        x:Name="NewCommentBox"
+                        Width="300"
+                        Height="100"
+                        MaxHeight="300"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Top"
+                        hc:InfoElement.Placeholder="{DynamicResource Wiki.Comment.Watermark}"
+                        AcceptsReturn="True"
+                        KeyDown="NewCommentBox_KeyDown"
+                        TextChanged="NewCommentBox_TextChanged"
+                        TextWrapping="Wrap" />
+                    <TextBox
+                        x:Name="NewCommentUser"
+                        Width="300"
+                        Height="15"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        hc:InfoElement.Placeholder="{DynamicResource Wiki.Comment.Watermark}"
+                        KeyDown="NewCommentBox_KeyDown" />
+                    <Button
+                        x:Name="SendComment"
+                        HorizontalAlignment="Right"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="SendComment_Click"
+                        Content="&#xea9e;"
+                        FontFamily="{StaticResource Iconfont}"
+                        FontSize="20"
+                        IsEnabled="False" />
+                </hc:SimpleStackPanel>
+                <hc:LoadingCircle
+                    x:Name="Loading"
+                    Grid.RowSpan="11"
+                    Width="150"
+                    Height="150"
+                    DotCount="5"
+                    DotDiameter="12.5"
+                    Visibility="Visible" />
+            </Grid>
+        </hc:ScrollViewer>
+    </Grid>
 </UserControl>

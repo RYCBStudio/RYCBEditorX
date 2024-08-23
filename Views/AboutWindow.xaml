@@ -8,9 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
     Title="About"
-    Width="535"
-    Height="296"
+    Width="600"
+    Height="321"
     d:DataContext="{d:DesignInstance Type=viewmodels:AboutViewModel}"
+    FontFamily="{DynamicResource Main}"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
     mc:Ignorable="d">
     <Window.Resources>
@@ -24,12 +25,13 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*" />
             <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
-        <Image Grid.RowSpan="4" Source="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png" />
+        <Image Grid.RowSpan="5" Source="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png" />
         <TextBlock
             Grid.Column="1"
             FontSize="50"
@@ -52,17 +54,23 @@
             Style="{StaticResource TextBlockBaseStyle}"
             Text="{Binding Version}"
             TextWrapping="WrapWithOverflow" />
-        <TextBlock
+        <TextBox
             Grid.Row="3"
+            Grid.Column="1"
+            IsReadOnly="True"
+            Text="{DynamicResource Copyright}"
+            TextWrapping="WrapWithOverflow" />
+        <TextBlock
+            Grid.Row="4"
             Grid.Column="1"
             Margin="20,0,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             FontFamily="{StaticResource Iconfont}"
-            FontSize="56"
+            FontSize="30"
             Text="&#xea0a;" />
         <TextBlock
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.Column="1"
             Margin="0,0,15,0"
             HorizontalAlignment="Right"

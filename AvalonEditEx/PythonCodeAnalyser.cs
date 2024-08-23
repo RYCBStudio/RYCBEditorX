@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Scripting.Hosting;
-using Microsoft.SqlServer.Management.Assessment;
 using Newtonsoft.Json;
 
 namespace RYCBEditorX;

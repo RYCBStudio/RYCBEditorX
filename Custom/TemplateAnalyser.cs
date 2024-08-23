@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace RYCBEditorX.Custom;
@@ -14,7 +11,7 @@ public class TemplateAnalyser
         try
         {
             // 读取JSON文件内容
-            string jsonContent = File.ReadAllText(filePath);
+            var jsonContent = File.ReadAllText(filePath);
 
             // 解析JSON内容
             var jsonObject = JObject.Parse(jsonContent);

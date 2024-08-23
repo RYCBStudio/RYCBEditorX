@@ -5,9 +5,9 @@ namespace RYCBEditorX.ControlEx;
 
 public class ConsoleHost : UserControl
 {
-    private Process _consoleProcess;
-    private System.IO.StreamReader _consoleReader;
-    private System.IO.StreamWriter _consoleWriter;
+    private readonly Process _consoleProcess;
+    private readonly System.IO.StreamReader _consoleReader;
+    private readonly System.IO.StreamWriter _consoleWriter;
 
     public ConsoleHost()
     {

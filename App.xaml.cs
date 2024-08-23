@@ -56,7 +56,7 @@ public partial class App : PrismApplication
     {
         GlobalWindows.ActivatingWindows = [];
         GlobalConfig.LocalizationString = CultureInfo.CurrentCulture.Name;
-        Thread t = new Thread(() =>
+        var t = new Thread(() =>
         {
             splash = new();
             splash.ShowDialog();//不能用Show
@@ -128,7 +128,7 @@ public partial class App : PrismApplication
         LOGGER.Log("载入配置项...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
         AppConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         AppSettings = AppConfiguration.AppSettings;
-
+        
         BUILD_TIME = DateTime.Now;
         GlobalConfig.Version = $"{MAJOR_VERSION}.{MINOR_VERSION}.{MICRO_VERSION}";
         GlobalConfig.Revision = REVISION_NUMBER;
@@ -139,6 +139,12 @@ public partial class App : PrismApplication
         GlobalConfig.CurrentLogger = LOGGER;
         GlobalConfig.Resources = Resources;
         GlobalConfig.LocalizationString = AppSettings.Settings["Language"].Value;
+        GlobalConfig.AutoBackupInterval = int.Parse(AppSettings.Settings["AutoBackupInterval"].Value);
+        GlobalConfig.ShouldAutoBackup = bool.Parse(AppSettings.Settings["AutoBackup"].Value);
+        GlobalConfig.AutoSaveInterval = int.Parse(AppSettings.Settings["AutoSaveInterval"].Value);
+        GlobalConfig.ShouldAutoSave = bool.Parse(AppSettings.Settings["AutoSave"].Value);
+        GlobalConfig.AutoBackupPath = AppSettings.Settings["AutoBackupPath"].Value;
+        Resources["Main"] = new FontFamily(AppSettings.Settings["Font"].Value);
 
         RefreshItems();
 
@@ -153,7 +159,7 @@ public partial class App : PrismApplication
         LOGGER.Log("载入程序主题与颜色", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
         var skin = AppSettings.Settings["Skin"].Value;
         GlobalConfig.Skin = skin;
-        UpdataResourceDictionary(GlobalConfig.GetSkin(skin), 0);
+        UpdateResourceDictionary(GlobalConfig.GetSkin(skin), 0);
 
         LOGGER.Log("载入编辑器配置项", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
         GlobalConfig.Editor.Theme = AppSettings.Settings["Editor.Theme"].Value;
@@ -165,7 +171,7 @@ public partial class App : PrismApplication
         GlobalConfig.CodeTemplates.AddRange(Custom.TemplateAnalyser.GetCodeImplements(STARTUP_PATH + "\\Profiles\\Templates\\python\\builtin.json"));
     }
 
-    private void UpdataResourceDictionary(string resourceStr, int pos)
+    private void UpdateResourceDictionary(string resourceStr, int pos)
     {
         if (pos < 0 || pos > 2)
         {

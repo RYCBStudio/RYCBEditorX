@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using RYCBEditorX.Dialogs.Views;
@@ -11,6 +12,7 @@ namespace RYCBEditorX.Views;
 public partial class MainWindow : Window
 {
     internal static bool IsCodeRunning = false;
+    public static System.Windows.Forms.Timer autoSaveTimer, autoBackupTimer;
     public static MainWindow Instance
     {
         get; set;
@@ -30,6 +32,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Instance = this;
+        Tabs = new List<TabItemStyle>();
         Tabs = [];
         NotificationsList.ItemsSource = Notifications;
         if (GlobalConfig.Skin == "dark")

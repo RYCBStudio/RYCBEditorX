@@ -15,6 +15,7 @@
     MaxHeight="450"
     d:DataContext="{d:DesignInstance Type=viewmodels:SplashViewModel}"
     Closed="Window_Closed"
+    FontFamily="{DynamicResource Main}"
     Icon="/Assets/Icon-Ver3.256x.png"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -62,6 +63,7 @@
             Grid.Row="3"
             DotCount="7"
             DotDiameter="10"
+            FontFamily="Microsoft YaHei UI"
             Foreground="White" />
     </Grid>
 </Window>

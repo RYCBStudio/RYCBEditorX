@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/RYCBEditorX.Utils;component/I18nResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/RYCBEditorX.Utils;component/Settings.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

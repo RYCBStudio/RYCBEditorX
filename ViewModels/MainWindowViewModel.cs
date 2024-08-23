@@ -1,4 +1,6 @@
-﻿#pragma warning disable IDE0063 // 使用简单的 "using" 语句
+﻿#pragma warning disable IDE0044 // 添加只读修饰符
+#pragma warning disable IDE0051 // 添加只读修饰符
+#pragma warning disable IDE0063 // 使用简单的 "using" 语句
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,8 +25,6 @@ using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using System.Linq;
 using Sunny.UI;
-using Microsoft.VisualStudio.Services.Common;
-using System.Threading.Tasks;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
@@ -123,6 +123,10 @@ public partial class MainWindowViewModel : BindableBase
     {
         get; set;
     }
+    public DelegateCommand LACCmd
+    {
+        get; set;
+    }
     #endregion
     public MainWindowViewModel()
     {
@@ -146,21 +150,51 @@ public partial class MainWindowViewModel : BindableBase
         PythonPkgMgmtCmd = new DelegateCommand(PythonPkgMgmt);
         GotoLineCmd = new DelegateCommand(GotoLine);
         ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
+        LACCmd = new DelegateCommand(OpenLAC);
+
+        if (GlobalConfig.ShouldAutoSave)
+        {
+            MainWindow.autoSaveTimer = new System.Windows.Forms.Timer
+            {
+                Interval = GlobalConfig.AutoSaveInterval,
+            };
+            MainWindow.autoSaveTimer.Tick += SaveFile;
+        }
+        if (GlobalConfig.ShouldAutoBackup)
+        {
+            MainWindow.autoBackupTimer = new System.Windows.Forms.Timer
+            {
+                Interval = GlobalConfig.AutoBackupInterval,
+            };
+            MainWindow.autoBackupTimer.Tick += SaveFile;
+        }
+    }
+
+    internal void OpenLAC()
+    {
+        new LicensesAndCopyright().ShowDialog();
     }
 
     internal void ConfigureRunProfiles()
     {
+        // 创建一个空列表用于存储ProfileInfo对象
         List<ProfileInfo> profiles = [];
+        // 创建一个空列表用于存储profile路径
         List<string> profile_paths = [];
-        foreach (var item in Directory.EnumerateFiles(App.STARTUP_PATH + "\\Profiles\\Runners"))
+        // 遍历Profiles\Runners文件夹中的文件
+        foreach (var item in Directory.EnumerateFiles(App.STARTUP_PATH + @"\Profiles\Runners"))
         {
+            // 将文件名添加到RunProfilesComboBox中
             MainWindow.Instance.RunProfilesComboBox.Items.Add(Path.GetFileNameWithoutExtension(item));
+            // 将文件名作为Name属性添加到ProfileInfo对象中
             profiles.Add(new()
             {
                 Name = Path.GetFileNameWithoutExtension(item)
             });
+            // 将文件路径添加到profile_paths中
             profile_paths.Add(item);
         }
+        // 创建一个RunnerProfileConfig对象，传入profiles和profile_paths
         new RunnerProfileConfig(profiles, profile_paths).ShowDialog();
     }
 
@@ -192,6 +226,18 @@ public partial class MainWindowViewModel : BindableBase
         else
         {
             return;
+        }
+        try
+        {
+            GetCurrentTextEditor().Save(tmpFileName);
+            MainWindow.Instance.FileSavingPanel.Visibility = Visibility.Visible;
+            MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Success"].ToString();
+        }
+        catch (Exception ex)
+        {
+            App.LOGGER.Error(ex);
+            MainWindow.Instance.FileSavingPanel.Visibility = Visibility.Visible;
+            MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Fail"].ToString();
         }
         MainWindow.Instance.RunPanel.Visibility = Visibility.Visible;
         Process runner = new()
@@ -387,6 +433,7 @@ public partial class MainWindowViewModel : BindableBase
             Background = new SolidColorBrush(Colors.Transparent),
             Margin = new Thickness(5, 0, 0, 0),
         });
+        TextEditorEx textEditorEx;
         if (Path.GetExtension(filename).Contains("md"))
         {
             var grid = new Grid
@@ -399,7 +446,7 @@ public partial class MainWindowViewModel : BindableBase
                 },
                 ShowGridLines = true
             };
-            var testTextEditorExMd = new TextEditorEx()
+            textEditorEx = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),
@@ -407,17 +454,17 @@ public partial class MainWindowViewModel : BindableBase
             };
             if (GlobalConfig.Skin == "dark")
             {
-                testTextEditorExMd.Background = (Brush)Application.Current.Resources["DarkBackGround"];
-                testTextEditorExMd.Foreground = (Brush)Application.Current.Resources["LightBackGround"];
+                textEditorEx.Background = (Brush)Application.Current.Resources["DarkBackGround"];
+                textEditorEx.Foreground = (Brush)Application.Current.Resources["LightBackGround"];
             }
             else
             {
-                testTextEditorExMd.Foreground = (Brush)Application.Current.Resources["DarkBackGround"];
-                testTextEditorExMd.Background = (Brush)Application.Current.Resources["LightBackGround"];
+                textEditorEx.Foreground = (Brush)Application.Current.Resources["DarkBackGround"];
+                textEditorEx.Background = (Brush)Application.Current.Resources["LightBackGround"];
             }
-            testTextEditorExMd.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
-            grid.Children.Add(testTextEditorExMd);
-            testTextEditorExMd.Load(filename);
+            textEditorEx.TextArea.TextView.LinkTextForegroundBrush = (Brush)Application.Current.Resources["LinkForeGround"];
+            grid.Children.Add(textEditorEx);
+            textEditorEx.Load(filename);
             var testTextEditorExHTML = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
@@ -454,9 +501,9 @@ public partial class MainWindowViewModel : BindableBase
                 Header = dock,
                 Uid = filename,
                 Content = grid,
-                Tag = testTextEditorExMd
+                Tag = textEditorEx
             };
-            var mdDoc = Markdown.ToHtml(testTextEditorExMd.Text);
+            var mdDoc = Markdown.ToHtml(textEditorEx.Text);
             testTextEditorExHTML.Text = mdDoc;
             webView.Loaded += async (s, e) =>
             {
@@ -485,7 +532,7 @@ public partial class MainWindowViewModel : BindableBase
             {
                 fileSize = 0;
             }
-            var textEditorEx = new TextEditorEx()
+            textEditorEx = new TextEditorEx()
             {
                 ShowLineNumbers = GlobalConfig.Editor.ShowLineNumber,
                 FontFamily = new(GlobalConfig.Editor.FontFamilyName),
@@ -553,6 +600,7 @@ public partial class MainWindowViewModel : BindableBase
                 }
             };
             _searchPanel.Show();
+            textEditorEx.CustomCmd = () => MainWindow.Instance.WikiDrawer.IsOpen = true;
             return tabItem;
         }
     }
@@ -560,7 +608,7 @@ public partial class MainWindowViewModel : BindableBase
     private string _currentInput = "";
     private string _lastCodeHash;
     private Dictionary<string, List<string>> _cachedVariables;
-    private bool _inhert = false;
+    private bool _inhert = false, _brackets_auto_closed = false, _qmark_auto_closed = false;
     private CompletionWindow _completionWindow;
 
     private void CodeTip(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -595,35 +643,16 @@ public partial class MainWindowViewModel : BindableBase
         {
             _inhert = true;
         }
-        else if (e.Text == "(")
+        else if (new List<string> { "(", "[", "{", "\"", "'" }.Contains(e.Text))
         {
-            var t = GetCurrentTextEditor();
-            InsertTextAtCursor(t, ")");
-            t.CaretOffset--;
-        }
-        else if (e.Text == "{")
-        {
-            var t = GetCurrentTextEditor();
-            InsertTextAtCursor(t, "}");
-            t.CaretOffset--;
-        }
-        else if (e.Text == "[")
-        {
-            var t = GetCurrentTextEditor();
-            InsertTextAtCursor(t, "]");
-            t.CaretOffset--;
-        }
-        else if (e.Text == "'")
-        {
-            var t = GetCurrentTextEditor();
-            InsertTextAtCursor(t, "'");
-            t.CaretOffset--;
-        }
-        else if (e.Text == "\"")
-        {
-            var t = GetCurrentTextEditor();
-            InsertTextAtCursor(t, "\"");
-            t.CaretOffset--;
+            if (new List<string> { "\"", "'" }.Contains(e.Text))
+            {
+                SymbolsAutoCompletion(e.Text, true);
+            }
+            else
+            {
+                SymbolsAutoCompletion(e.Text);
+            }
         }
         if (e.Text == "\n" || e.Text == " " || e.Text.IsNumber() || !e.Text.IsAllChar())
         {
@@ -635,7 +664,7 @@ public partial class MainWindowViewModel : BindableBase
             else if (e.Text == "\n")
             {
                 var t = GetCurrentTextEditor();
-                int caretOffset = t.CaretOffset;
+                var caretOffset = t.CaretOffset;
                 // 获取光标前的字符
                 if (caretOffset > 0 && t.Document.GetText(caretOffset - 1, 1) == ":")
                 {
@@ -643,8 +672,8 @@ public partial class MainWindowViewModel : BindableBase
                     t.Document.Insert(caretOffset, "\n");
 
                     // 获取当前行的缩进
-                    int lineNumber = t.Document.GetLineByOffset(caretOffset).LineNumber;
-                    string indent = GetLineIndentation(t, lineNumber);
+                    var lineNumber = t.Document.GetLineByOffset(caretOffset).LineNumber;
+                    var indent = GetLineIndentation(t, lineNumber);
 
                     // 插入缩进
                     t.Document.Insert(t.CaretOffset, indent);
@@ -656,7 +685,16 @@ public partial class MainWindowViewModel : BindableBase
                     e.Handled = true;
                 }
             }
-            _currentInput = "";
+            else if ((e.Text == ")" || e.Text == "]" || e.Text == "}" || (e.Text == "'" & _qmark_auto_closed) || (e.Text == "\"" & _qmark_auto_closed)) & _brackets_auto_closed)
+            {
+                var t = GetCurrentTextEditor();
+                var co = t.CaretOffset;
+                t.Text = t.Text.Remove(t.CaretOffset, 1);
+                t.CaretOffset = co;
+                _brackets_auto_closed = false;
+                _qmark_auto_closed = false;
+            }
+            EndCompletion();
             return;
         }
 
@@ -665,46 +703,25 @@ public partial class MainWindowViewModel : BindableBase
 
         // 保存当前输入
         _currentInput += e.Text;
-        if (Language.Python.Keywords.Contains(_currentInput))
+        if (Language.Python.Keywords.Contains(_currentInput) || Language.Python.MagicMethods.Contains(_currentInput) || Language.Python.BuiltIns.Contains(_currentInput))
         {
-            _currentInput = "";
-            _completionWindow.Close();
-            return;
-        }
-        else if (Language.Python.MagicMethods.Contains(_currentInput))
-        {
-            _currentInput = "";
-            _completionWindow.Close();
-            return;
-        }
-        else if (Language.Python.BuiltIns.Contains(_currentInput))
-        {
-            _currentInput = "";
-            _completionWindow.Close();
+            EndCompletion();
             return;
         }
 
         App.LOGGER.LogDebug("Start Code Sense");
 
         App.LOGGER.LogDebug("Start Code Sense - Keyword");
-        var _keywords = Language.Python.Keywords.Where((s) => { return s.StartsWith(_currentInput); }).ToList();
-        _keywords.AddRange(Language.Python.Keywords.Where((s) => { return s.Contains(_currentInput); }));
-        _keywords = [.. _keywords.RemoveDuplicates()];
+        var _keywords = AddCompletions(Language.Python.Keywords);
 
         App.LOGGER.LogDebug("Start Code Sense - Magic");
-        var _magics = Language.Python.MagicMethods.Where((s) => { return s.StartsWith(_currentInput); }).ToList();
-        _magics.AddRange(Language.Python.MagicMethods.Where((s) => { return s.Contains(_currentInput); }));
-        _magics = [.. _magics.RemoveDuplicates()];
+        var _magics = AddCompletions(Language.Python.MagicMethods);
 
         App.LOGGER.LogDebug("Start Code Sense - Bulitin");
-        var _builtins = Language.Python.MagicMethods.Where((s) => { return s.StartsWith(_currentInput); }).ToList();
-        _builtins.AddRange(Language.Python.MagicMethods.Where((s) => { return s.Contains(_currentInput); }));
-        _builtins = [.. _builtins.RemoveDuplicates()];
+        var _builtins = AddCompletions(Language.Python.BuiltIns);
 
         App.LOGGER.LogDebug("Start Code Sense - Template");
-        var _templates = GlobalConfig.CodeTemplates.Keys.Where((s) => { return s.StartsWith(_currentInput); }).ToList();
-        _templates.AddRange(GlobalConfig.CodeTemplates.Keys.Where((s) => { return s.Contains(_currentInput); }));
-        _templates = [.. _templates.RemoveDuplicates()];
+        var _templates = AddCompletions(GlobalConfig.CodeTemplates.Keys);
 
         var currentCode = GetCurrentTextEditor().Text.RemoveRight(_currentInput.Length);
         var currentHash = currentCode.ComputeHash();
@@ -753,7 +770,7 @@ public partial class MainWindowViewModel : BindableBase
 
         if (completionDatas.Count == 0)
         {
-            _currentInput = "";
+            EndCompletion();
             return;
         }
 
@@ -769,6 +786,38 @@ public partial class MainWindowViewModel : BindableBase
         };
     }
 
+    public List<string> AddCompletions(IEnumerable<string> data)
+    {
+        var _data = data.Where((s) => { return s.StartsWith(_currentInput); }).ToList();
+        _data.AddRange(data.Where((s) => { return s.Contains(_currentInput); }));
+        _data = [.. _data.RemoveDuplicates()];
+        return _data;
+    }
+
+    public void EndCompletion()
+    {
+        _currentInput = "";
+        _completionWindow?.Close();
+    }
+
+    public void SymbolsAutoCompletion(string symbol, bool isQMark = false)
+    {
+        List<string> SupportedSymbols = ["(", "[", "{", "\"", "'"];
+        List<string> SupportedCompletionSymbols = [")", "]", "}", "\"", "'"];
+        if (SupportedSymbols.Contains(symbol))
+        {
+            var t = GetCurrentTextEditor();
+            InsertTextAtCursor(t, SupportedCompletionSymbols[SupportedSymbols.IndexOf(symbol)]);
+            t.CaretOffset--;
+            _brackets_auto_closed = true;
+            _qmark_auto_closed = isQMark;
+        }
+        else
+        {
+            App.LOGGER.Error(new NotSupportedException("符号[{0}]不支持自动补全。".FormatEx(symbol)));
+        }
+    }
+
     public string GetLineIndentation(TextEditor t, int lineNumber)
     {
         // 获取前一行的缩进
@@ -778,13 +827,17 @@ public partial class MainWindowViewModel : BindableBase
             var previousLineText = t.Document.GetText(previousLine.Offset, previousLine.Length);
 
             // 假设使用空格作为缩进
-            int indentLength = 0;
-            foreach (char c in previousLineText)
+            var indentLength = 0;
+            foreach (var c in previousLineText)
             {
                 if (c == ' ')
+                {
                     indentLength++;
+                }
                 else
+                {
                     break;
+                }
             }
             return new string(' ', indentLength);
         }
@@ -870,6 +923,8 @@ public partial class MainWindowViewModel : BindableBase
             {
                 Json2TreeViewParser.LoadJsonIntoTreeView(MainWindow.Instance.FileStructTree, new FileStructAnalyzer(ofd.FileName).Analyze());
             }
+            MainWindow.autoSaveTimer?.Start();
+            MainWindow.autoBackupTimer?.Start();
         }
     }
 
@@ -893,11 +948,69 @@ public partial class MainWindowViewModel : BindableBase
                 MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Fail"].ToString();
             }
         }
+        else
+        {
+            SaveAsFile();
+        }
+    }
+
+    internal void SaveFile(object sender, EventArgs e)
+    {
+        if (MainWindow.Instance.MainTabCtrl.SelectedItem is null)
+        {
+            return;
+        }
+        if (sender == MainWindow.autoSaveTimer)
+        {
+            MainWindow.Instance.FileSavingPanel.Visibility = Visibility.Visible;
+            if (!((TabItem)MainWindow.Instance.MainTabCtrl.SelectedItem).ToolTip.ToString().IsNullOrEmpty())
+            {
+                try
+                {
+                    GetCurrentTextEditor().Save(((TabItem)MainWindow.Instance.MainTabCtrl.SelectedItem).ToolTip.ToString());
+                    MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Success"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    App.LOGGER.Error(ex);
+                    MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Fail"].ToString();
+                }
+            }
+        }
+        else if (sender == MainWindow.autoBackupTimer)
+        {
+            if (!((TabItem)MainWindow.Instance.MainTabCtrl.SelectedItem).ToolTip.ToString().IsNullOrEmpty())
+            {
+                try
+                {
+                    var file = ((TabItem)MainWindow.Instance.MainTabCtrl.SelectedItem).ToolTip.ToString();
+                    GetCurrentTextEditor().Save(GlobalConfig.AutoBackupPath + Path.GetFileNameWithoutExtension(file) + ".bak" + Path.GetExtension(file).Replace("\"", ""));
+                }
+                catch (Exception ex)
+                {
+                    App.LOGGER.Error(ex);
+                }
+            }
+        }
     }
 
     internal void SaveAsFile()
     {
-
+        var sfd = new System.Windows.Forms.SaveFileDialog();
+        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            MainWindow.Instance.FileSavingPanel.Visibility = Visibility.Visible;
+            try
+            {
+                GetCurrentTextEditor().Save(sfd.FileName);
+                MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Success"].ToString();
+            }
+            catch (Exception ex)
+            {
+                App.LOGGER.Error(ex);
+                MainWindow.Instance.FileSavingTip.Text = Application.Current.Resources["Main.Bottom.FileSavingTip.Fail"].ToString();
+            }
+        }
     }
 
     internal void CloseTab()

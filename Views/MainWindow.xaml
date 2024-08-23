@@ -19,6 +19,7 @@
     prism:ViewModelLocator.AutoWireViewModel="True"
     Closed="Window_Closed"
     Closing="Window_Closing"
+    FontFamily="{DynamicResource Main}"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
     Loaded="Window_Loaded"
     WindowState="Maximized"
@@ -107,7 +108,8 @@
         <Menu
             x:Name="MainMenu"
             Grid.ColumnSpan="2"
-            Background="Transparent">
+            Background="Transparent"
+            FontFamily="{DynamicResource Main}">
             <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.File}">
                 <MenuItem Header="{DynamicResource Main.Menu.File.New}">
                     <MenuItem.Icon>
@@ -313,7 +315,7 @@
                             Text="&#xe600;" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="{DynamicResource Main.Menu.Help.Lc}">
+                <MenuItem Command="{Binding LACCmd}" Header="{DynamicResource Main.Menu.Help.Lc}">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource Iconfont}"
@@ -328,12 +330,14 @@
             x:Name="MainTabCtrl"
             Grid.Row="2"
             BorderBrush="{x:Null}"
+            FontFamily="{DynamicResource Main}"
             IsSynchronizedWithCurrentItem="True" />
         <TabControl
             x:Name="BottomTabCtrl"
             Grid.Row="3"
             Grid.ColumnSpan="2"
             Margin="0,1,0,0"
+            FontFamily="{DynamicResource Main}"
             IsSynchronizedWithCurrentItem="True"
             TabStripPlacement="Bottom">
             <TabItem Header="{DynamicResource Main.Bottom.Errors}" />
@@ -440,6 +444,7 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
+                            FontFamily="{DynamicResource Main}"
                             Style="{StaticResource TextBlockTitle}"
                             Text="{DynamicResource Main.SideBar.Notifications.Title}" />
                         <Button
@@ -452,6 +457,7 @@
                     <ListBox
                         x:Name="NotificationsList"
                         Grid.Row="1"
+                        FontFamily="{DynamicResource Main}"
                         SelectionChanged="NotificationsList_SelectionChanged"
                         Style="{StaticResource NotificationList}">
                         <ListBox.ItemTemplate>
@@ -522,6 +528,7 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
+                            FontFamily="{DynamicResource Main}"
                             Style="{StaticResource TextBlockTitle}"
                             Text="{DynamicResource Main.SideBar.Project.Title}" />
                         <Button
@@ -534,6 +541,7 @@
                     <ListBox
                         x:Name="ProjectTreeList"
                         Grid.Row="1"
+                        FontFamily="{DynamicResource Main}"
                         SelectionChanged="NotificationsList_SelectionChanged"
                         Style="{StaticResource NotificationList}">
                         <ListBox.ItemTemplate>
@@ -581,6 +589,7 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
+                            FontFamily="{DynamicResource Main}"
                             Style="{StaticResource TextBlockTitle}"
                             Text="{DynamicResource Main.SideBar.Struct.Title}" />
                         <Button
@@ -594,6 +603,7 @@
                         x:Name="FileStructTree"
                         Grid.Row="1"
                         Background="Transparent"
+                        FontFamily="{DynamicResource Main}"
                         Foreground="{DynamicResource PrimaryBrush}"
                         Style="{StaticResource BaseStyle}" />
                 </Grid>
@@ -619,6 +629,7 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
+                            FontFamily="{DynamicResource Main}"
                             Style="{StaticResource TextBlockTitle}"
                             Text="{DynamicResource Main.SideBar.Wiki.Title}" />
                         <Button
@@ -628,7 +639,7 @@
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Style="{StaticResource ButtonIcon}" />
                     </DockPanel>
-                    <local:Wiki Grid.Row="1" />
+                    <local:Wiki Grid.Row="1" FontFamily="{DynamicResource Main}" />
                 </Grid>
             </Border>
         </hc:Drawer>
@@ -650,6 +661,7 @@
                         <TextBlock
                             Margin="10,0,0,0"
                             DockPanel.Dock="Left"
+                            FontFamily="{DynamicResource Main}"
                             Style="{StaticResource TextBlockTitle}"
                             Text="{DynamicResource Main.SideBar.Pylint.Title}" />
                         <Button
@@ -659,7 +671,7 @@
                             Foreground="{DynamicResource PrimaryTextBrush}"
                             Style="{StaticResource ButtonIcon}" />
                     </DockPanel>
-                    <local:PylintSettings Grid.Row="1" />
+                    <local:PylintSettings Grid.Row="1" FontFamily="{DynamicResource Main}" />
                 </Grid>
             </Border>
         </hc:Drawer>
@@ -668,7 +680,8 @@
                 x:Name="Sbar"
                 Grid.Row="3"
                 HorizontalAlignment="Stretch"
-                BorderBrush="{x:Null}">
+                BorderBrush="{x:Null}"
+                FontFamily="{DynamicResource Main}">
                 <StatusBarItem HorizontalAlignment="Right" DockPanel.Dock="Right">
                     <Button
                         x:Name="BtnSelectHlProfile"
