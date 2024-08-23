@@ -1,4 +1,5 @@
 # RYCBEditorX
-A newer version of [RYCB Editor](https://github.com/RYCBStudio/RYCBEditor-Legacy). Use WPF instead of Winforms.
+\[简体中文|[English](./README-en.md)\]
+[RYCB Editor](https://github.com/RYCBStudio/RYCBEditor-Legacy)的新版本。由WinForms移植到WPF。
 
-If you want to download older versions, please go to [here](https://github.com/RYCBStudio/RYCBEditor-Legacy/releases).
+如果你想下载旧版本, 请点击[此处](https://github.com/RYCBStudio/RYCBEditor-Legacy/releases).
