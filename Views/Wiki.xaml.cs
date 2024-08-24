@@ -34,7 +34,14 @@ public partial class Wiki : UserControl
     public void LoadData()
     {
         //var filePath = @"F:\VSProj\repos\RYCBEditorX\bin\Debug\net8.0-windows\Cache\online-cache\comment[range].json";
-        _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils, $"target='{Header.Text}'");
+        if (Header.Text.IsNullOrEmptyEx())
+        {
+            _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils);
+        }
+        else
+        {
+            _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils, $"target='{Header.Text}'");
+        }
         var comments = _loader.LoadCommentsAsync();
         // 将数据绑定到 ListBox
         CommentsListBox.ItemsSource = comments;
@@ -125,7 +132,7 @@ public partial class Wiki : UserControl
     {
         if (!NewCommentBox.Text.IsNullOrEmptyEx())
         {
-            _loader.AddComment(NewCommentBox.Text, NewCommentUser.Text);
+            _loader.AddComment(NewCommentBox.Text, NewCommentUser.Text, Header.Text);
             LoadData();
             NewCommentBox.Text = "";
         }
@@ -157,5 +164,12 @@ public partial class Wiki : UserControl
         {
             HeaderIcon.Text = Icons.VARIABLE;
         }
+        LoadData();
+    }
+
+    private void DeleteComment(object sender, RoutedEventArgs e)
+    {
+        _loader.DeleteComment((((Button)sender).Tag as Comment).Uid);
+        LoadData();
     }
 }

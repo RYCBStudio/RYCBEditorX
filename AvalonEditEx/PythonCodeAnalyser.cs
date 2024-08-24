@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
 using Newtonsoft.Json;
+using RYCBEditorX.Utils;
+using RYCBEditorX.ViewModels;
 
 namespace RYCBEditorX;
 public class PythonCodeAnalyser
@@ -51,3 +54,61 @@ public class PythonCodeAnalyser
         return variables;
     }
 }
+
+public class DocstringProcessor
+{
+    /// <summary>
+    /// 读取指定目录下的所有JSON文件，并解析其中的docstrings。
+    /// </summary>
+    /// <param name="directoryPath">指定目录</param>
+    public static List<Dictionary<string, string>> ProcessJsonFiles(string directoryPath, ref int now, ref int total)
+    {
+        var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
+        total = files.Length;
+        List<Dictionary<string, string>> docStrings = [];
+        foreach (var file in files)
+        {
+            var jsonContent = File.ReadAllText(file);
+            var docString = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
+            docStrings.Add(docString);
+            now++;
+        }
+        return docStrings;
+    }
+
+    public static void StartExtract()
+    {
+        Process vg = new()
+        {
+            StartInfo = new()
+            {
+                FileName = App.STARTUP_PATH + "Tools\\func_getter.exe",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            }
+        };
+        vg.Start();
+        FileSystemWatcher fs = new()
+        {
+            Path = @"F:\Temp\Python",
+            Filter = "*.json",
+            IncludeSubdirectories = true,
+        };
+        fs.Changed += OnCreate; ;
+        fs.EnableRaisingEvents = true;
+    }
+
+    private static void OnCreate(object sender, FileSystemEventArgs e)
+    {
+        if (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Changed)
+        {
+            _now++;
+        }
+        if (e.ChangeType == WatcherChangeTypes.Deleted)
+        {
+            _now--;
+        }
+    }
+}
+

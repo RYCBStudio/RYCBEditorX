@@ -726,66 +726,81 @@
             </StatusBar>
         </DockPanel>
         <ToolBar
+            x:Name="MainToolBar"
             Grid.Row="1"
             Height="auto"
             Background="Transparent">
-            <Button
-                Margin="2.5,0,2.5,0"
-                Command="{Binding RunCmd}"
-                Content="&#xe65d;"
-                FontFamily="{StaticResource Iconfont}"
-                FontSize="15"
-                Style="{StaticResource ButtonInfo}" />
-            <hc:TransitioningContentControl TransitionMode="Left2Right">
-                <hc:FlexPanel x:Name="RunPanel" Visibility="Collapsed">
-                    <hc:ComboBox x:Name="RunProfilesComboBox" SelectionChanged="RunProfilesComboBox_SelectionChanged">
-                        <ComboBoxItem>
-                            Current File
-                        </ComboBoxItem>
-                    </hc:ComboBox>
+            <DockPanel Width="{Binding Width, ElementName=MainToolBar}" LastChildFill="True">
+                <hc:SimpleStackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                     <Button
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding ConfigRunProfilesCmd}"
-                        Content="&#xe66e;"
+                        Command="{Binding RunCmd}"
+                        Content="&#xe65d;"
                         FontFamily="{StaticResource Iconfont}"
-                        FontSize="18"
-                        Style="{StaticResource ButtonDashed}" />
-                </hc:FlexPanel>
-            </hc:TransitioningContentControl>
-            <Button
-                Margin="2.5,0,2.5,0"
-                Command="{Binding StopCmd}"
-                Content="&#xea89;"
-                FontFamily="{StaticResource Iconfont}"
-                Style="{StaticResource ButtonDanger}" />
-            <Button
-                Margin="2.5,0,2.5,0"
-                Command="{Binding DebugCmd}"
-                Content="&#xe606;"
-                FontFamily="{StaticResource Iconfont}"
-                Style="{StaticResource ButtonWarning}" />
-            <hc:TransitioningContentControl TransitionMode="Left2Right">
-                <hc:FlexPanel x:Name="DebugPanel" Visibility="Collapsed">
+                        FontSize="15"
+                        Style="{StaticResource ButtonInfo}" />
+                    <hc:TransitioningContentControl TransitionMode="Left2Right">
+                        <hc:FlexPanel x:Name="RunPanel" Visibility="Collapsed">
+                            <hc:ComboBox x:Name="RunProfilesComboBox" SelectionChanged="RunProfilesComboBox_SelectionChanged">
+                                <ComboBoxItem>
+                                    Current File
+                                </ComboBoxItem>
+                            </hc:ComboBox>
+                            <Button
+                                Margin="2.5,0,2.5,0"
+                                Command="{Binding ConfigRunProfilesCmd}"
+                                Content="&#xe66e;"
+                                FontFamily="{StaticResource Iconfont}"
+                                FontSize="18"
+                                Style="{StaticResource ButtonDashed}" />
+                        </hc:FlexPanel>
+                    </hc:TransitioningContentControl>
                     <Button
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding StepInCmd}"
-                        Content="&#xe855;"
+                        Command="{Binding StopCmd}"
+                        Content="&#xea89;"
                         FontFamily="{StaticResource Iconfont}"
-                        Style="{StaticResource ButtonDashed}" />
+                        Style="{StaticResource ButtonDanger}" />
                     <Button
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding StepPassCmd}"
-                        Content="&#xe854;"
+                        Command="{Binding DebugCmd}"
+                        Content="&#xe606;"
                         FontFamily="{StaticResource Iconfont}"
-                        Style="{StaticResource ButtonDashed}" />
-                    <Button
-                        Margin="2.5,0,2.5,0"
-                        Command="{Binding StepOutCmd}"
-                        Content="&#xe853;"
-                        FontFamily="{StaticResource Iconfont}"
-                        Style="{StaticResource ButtonDashed}" />
-                </hc:FlexPanel>
-            </hc:TransitioningContentControl>
+                        Style="{StaticResource ButtonWarning}" />
+                    <hc:TransitioningContentControl TransitionMode="Left2Right">
+                        <hc:FlexPanel x:Name="DebugPanel" Visibility="Collapsed">
+                            <Button
+                                Margin="2.5,0,2.5,0"
+                                Command="{Binding StepInCmd}"
+                                Content="&#xe855;"
+                                FontFamily="{StaticResource Iconfont}"
+                                Style="{StaticResource ButtonDashed}" />
+                            <Button
+                                Margin="2.5,0,2.5,0"
+                                Command="{Binding StepPassCmd}"
+                                Content="&#xe854;"
+                                FontFamily="{StaticResource Iconfont}"
+                                Style="{StaticResource ButtonDashed}" />
+                            <Button
+                                Margin="2.5,0,2.5,0"
+                                Command="{Binding StepOutCmd}"
+                                Content="&#xe853;"
+                                FontFamily="{StaticResource Iconfont}"
+                                Style="{StaticResource ButtonDashed}" />
+                        </hc:FlexPanel>
+                    </hc:TransitioningContentControl>
+                </hc:SimpleStackPanel>
+                <Button
+                    x:Name="User"
+                    Click="Login"
+                    Content="{DynamicResource Main.User.Unlogin}"
+                    DockPanel.Dock="Right" />
+                <Button
+                    x:Name="Test_LoadPython"
+                    Click="test_Load"
+                    Content="Load"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
         </ToolBar>
     </Grid>
 </Window>

@@ -177,6 +177,30 @@ public partial class MainWindow : Window
         GlobalConfig.CurrentRunProfile = GlobalConfig.CurrentProfiles[RunProfilesComboBox.SelectedIndex - 1];
     }
 
+    private void Login(object sender, RoutedEventArgs e)
+    {
+        var oldUserName = User.Content;
+        var lw = new LoginWindow();
+        if (lw.ShowDialog() == true)
+        {
+            User.Content = lw.UserName;
+            if (lw.UserName.IsNullOrEmptyEx())
+            {
+                User.Content = oldUserName;
+            }
+        }
+        else
+        {
+            User.Content = Application.Current.Resources["Main.User.Unlogin"];
+        }
+    }
+
+    private void test_Load(object sender, RoutedEventArgs e)
+    {
+        var vm = new ViewModels.ProgressedTipViewModel() { Content = "Test.Load.Python", Now = 0, Title = "loading..." };
+        new ProgressedInfoTip() { DataContext = vm}.Show();
+    }
+
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         Focus();

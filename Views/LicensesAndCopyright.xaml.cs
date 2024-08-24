@@ -21,7 +21,7 @@ public partial class LicensesAndCopyright : HandyControl.Controls.Window
     private void ApplyAnimation()
     {
         var storyboard = (Storyboard)FindResource("ItemAppearStoryboard");
-        int index = 0;
+        var index = 0;
 
         foreach (var item in MyListBox.Items)
         {

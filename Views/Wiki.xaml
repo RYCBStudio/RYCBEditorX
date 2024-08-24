@@ -46,7 +46,6 @@
                         Text="&#xe629;" />
                     <TextBox
                         x:Name="Header"
-                        TextChanged="Header_TextChanged"
                         Margin="5,0,0,0"
                         Background="Transparent"
                         BorderBrush="Transparent"
@@ -54,7 +53,8 @@
                         FontSize="25"
                         FontWeight="Bold"
                         IsReadOnly="True"
-                        Style="{StaticResource TextBoxBaseStyle}" />
+                        Style="{StaticResource TextBoxBaseStyle}"
+                        TextChanged="Header_TextChanged" />
                 </hc:FlexPanel>
                 <hc:Divider
                     Grid.Row="1"
@@ -112,6 +112,12 @@
                                             Style="{StaticResource ToggleButtonDefault}"
                                             Tag="{Binding}" />
                                         <Label Content="{Binding Likes}" />
+                                        <Button
+                                            Content="&#xe628;"
+                                            FontFamily="{StaticResource Iconfont}"
+                                            Style="{StaticResource ButtonBaseStyle}"
+                                            Click="DeleteComment"
+                                            Tag="{Binding}" />
                                     </hc:FlexPanel>
                                 </Grid>
                             </DataTemplate>
@@ -137,16 +143,18 @@
                         VerticalContentAlignment="Center"
                         hc:InfoElement.Placeholder="{DynamicResource Wiki.Comment.Watermark}"
                         KeyDown="NewCommentBox_KeyDown" />
-                    <Button
-                        x:Name="SendComment"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Click="SendComment_Click"
-                        Content="&#xea9e;"
-                        FontFamily="{StaticResource Iconfont}"
-                        FontSize="20"
-                        IsEnabled="False" />
+                    <hc:SimplePanel>
+                        <Button
+                            x:Name="SendComment"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="SendComment_Click"
+                            Content="&#xea9e;"
+                            FontFamily="{StaticResource Iconfont}"
+                            FontSize="20"
+                            IsEnabled="False" />
+                    </hc:SimplePanel>
                 </hc:SimpleStackPanel>
                 <hc:LoadingCircle
                     x:Name="Loading"

@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.MySQL", "..\RYC
 		{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D} = {7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RYCBEditorX.Test", "..\RYCBEditorX.Test\RYCBEditorX.Test.csproj", "{A7132834-AF4A-44C5-AE61-E9C972A8788F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE25DED2-540C-4423-A38F-74C90386C6CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7132834-AF4A-44C5-AE61-E9C972A8788F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7132834-AF4A-44C5-AE61-E9C972A8788F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7132834-AF4A-44C5-AE61-E9C972A8788F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7132834-AF4A-44C5-AE61-E9C972A8788F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

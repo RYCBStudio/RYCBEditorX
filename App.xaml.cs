@@ -129,6 +129,7 @@ public partial class App : PrismApplication
         AppConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         AppSettings = AppConfiguration.AppSettings;
         
+        var builder = 
         BUILD_TIME = DateTime.Now;
         GlobalConfig.Version = $"{MAJOR_VERSION}.{MINOR_VERSION}.{MICRO_VERSION}";
         GlobalConfig.Revision = REVISION_NUMBER;
@@ -195,7 +196,8 @@ public partial class App : PrismApplication
     {
         splash.Dispatcher.Invoke(
             () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 6));
-        return Container.Resolve<MainWindow>();
+        GlobalWindows.CurrentMainWindow = Container.Resolve<MainWindow>();
+        return GlobalWindows.CurrentMainWindow;
     }
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
