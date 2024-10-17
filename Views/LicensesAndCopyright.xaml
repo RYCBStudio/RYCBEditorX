@@ -115,7 +115,7 @@
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Foreground="Gray"
-                        Text="1.11.62" />
+                        Text="1.11.65" />
                     <Button
                         Margin="555,0,0,0"
                         Click="OpenNuget"
@@ -225,7 +225,7 @@
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Foreground="Gray"
-                        Text="1.0.2592.51" />
+                        Text="1.0.2739.15" />
                     <Button
                         Margin="477,0,0,0"
                         Click="OpenNuget"
@@ -313,34 +313,12 @@
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Foreground="Gray"
-                        Text="8.1.97" />
+                        Text="9.0.537" />
                     <Button
-                        Margin="585,0,0,0"
+                        Margin="578,0,0,0"
                         Click="OpenNuget"
                         Content="View"
                         Tag="https://www.nuget.org/packages/Prism.Dryloc" />
-                </StackPanel>
-            </ListBoxItem>
-            <ListBoxItem HorizontalAlignment="Stretch">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontFamily="{StaticResource Iconfont}"
-                        Text="&#xec39;" />
-                    <TextBlock
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Text="SunnyUI" />
-                    <TextBlock
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Foreground="Gray"
-                        Text="3.6.8.1" />
-                    <Button
-                        Margin="606,0,0,0"
-                        Click="OpenNuget"
-                        Content="View"
-                        Tag="https://www.nuget.org/packages/SunnyUI" />
                 </StackPanel>
             </ListBoxItem>
             <ListBoxItem HorizontalAlignment="Stretch">

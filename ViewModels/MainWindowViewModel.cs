@@ -24,12 +24,14 @@ using Markdig;
 using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using System.Linq;
-using Sunny.UI;
+using RYCBEditorX.Utils.Update;
+using HandyControl.Tools.Extension;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
 {
-    #region 变量
+    #region 变量&命令
     private Process _runnerProc;
     public DelegateCommand NewFileCmd
     {
@@ -127,6 +129,10 @@ public partial class MainWindowViewModel : BindableBase
     {
         get; set;
     }
+    public DelegateCommand DownloadUpdateCmd
+    {
+        get; set;
+    }
     #endregion
     public MainWindowViewModel()
     {
@@ -151,23 +157,30 @@ public partial class MainWindowViewModel : BindableBase
         GotoLineCmd = new DelegateCommand(GotoLine);
         ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
         LACCmd = new DelegateCommand(OpenLAC);
+        DownloadUpdateCmd = new DelegateCommand(DownloadUpdate);
 
         if (GlobalConfig.ShouldAutoSave)
         {
-            MainWindow.autoSaveTimer = new System.Windows.Forms.Timer
+            MainWindow.autoSaveTimer = new()
             {
-                Interval = GlobalConfig.AutoSaveInterval,
+                Interval = TimeSpan.FromSeconds(GlobalConfig.AutoSaveInterval),
             };
             MainWindow.autoSaveTimer.Tick += SaveFile;
         }
         if (GlobalConfig.ShouldAutoBackup)
         {
-            MainWindow.autoBackupTimer = new System.Windows.Forms.Timer
+            MainWindow.autoBackupTimer = new()
             {
-                Interval = GlobalConfig.AutoBackupInterval,
+                Interval = TimeSpan.FromSeconds(GlobalConfig.AutoBackupInterval),
             };
             MainWindow.autoBackupTimer.Tick += SaveFile;
         }
+    }
+
+    internal void DownloadUpdate()
+    {
+        UpdateUtils.StartAsync();
+        MainWindow.Instance.DownloadingPanel.Show();
     }
 
     internal void OpenLAC()
@@ -244,7 +257,7 @@ public partial class MainWindowViewModel : BindableBase
         {
             StartInfo = new()
             {
-                Arguments = tmpFileName,
+                Arguments = $"\"{(GlobalConfig.PythonPath.IsNullOrEmpty() ? "python" : GlobalConfig.PythonPath)}\" \"{tmpFileName}\"",
                 FileName = App.STARTUP_PATH + "\\Tools\\Runner.exe",
                 UseShellExecute = false,
             }
@@ -253,7 +266,7 @@ public partial class MainWindowViewModel : BindableBase
         {
             StartInfo = new()
             {
-                Arguments = tmpFileName + " -nowait",
+                Arguments = $"\"{(GlobalConfig.PythonPath.IsNullOrEmpty() ? "python" : GlobalConfig.PythonPath)}\" \"{tmpFileName}\" -nowait",
                 FileName = App.STARTUP_PATH + "\\Tools\\Runner.exe",
                 UseShellExecute = false,
                 RedirectStandardInput = true,
@@ -264,17 +277,31 @@ public partial class MainWindowViewModel : BindableBase
         };
         App.LOGGER.LogDebug("Starting runner...");
         runner.Start();
+
+        //MainWindow.Instance.Dispatcher.BeginInvoke(() => {
+        //    if (SetWindow.FindWindow(runner.MainWindowTitle))
+        //    {
+        //        MainWindow.Instance.Dispatcher.Invoke(new Action(() =>
+        //        {
+        //            SetWindow.SetParent(MainWindow.Instance.ConsoleHost.Handle, runner.MainWindowTitle);  //设置父容器
+        //        }));
+        //    }
+        //    else
+        //    {
+        //        App.LOGGER.Log("未能查找到窗体", EnumLogType.WARN);
+        //    }
+        //});
         App.LOGGER.LogDebug("Judging runner...");
         if (!GetCurrentTextEditor().Text.Contains("import turtle"))
         {
             runner_proc_protecter.Start();
-            MainWindow.Instance.ConsoleHost.Text = runner_proc_protecter.StandardError.ReadToEnd();
+            //MainWindow.Instance.ConsoleHost.Text = runner_proc_protecter.StandardError.ReadToEnd();
         }
         //SetForegroundWindow(runner.Handle);
         _runnerProc = runner;
         MainWindow.Instance.BottomTabCtrl.SelectedIndex = 1;
         App.LOGGER.LogDebug("Setting runner...");
-        SetWindowPos(runner.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        //SetWindowPos(runner.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
     }
 
     internal void Stop()
@@ -617,8 +644,8 @@ public partial class MainWindowViewModel : BindableBase
         {
             _completionWindow = new(GetCurrentTextEditor().TextArea)
             {
-                Background = MainWindow.Instance.MainMenu.Background,
-                Foreground = MainWindow.Instance.MainMenu.Foreground,
+                Background = (Brush)Application.Current.Resources[$"{GlobalConfig.Skin.ToUpper(1)}BackGround"],
+                Foreground = (Brush)Application.Current.Resources["PrimaryTextBrush"],
                 CloseWhenCaretAtBeginning = true
             };
         }
@@ -630,8 +657,8 @@ public partial class MainWindowViewModel : BindableBase
         {
             _completionWindow = new(GetCurrentTextEditor().TextArea)
             {
-                Background = MainWindow.Instance.MainMenu.Background,
-                Foreground = MainWindow.Instance.MainMenu.Foreground,
+                Background = (Brush)Application.Current.Resources[$"{GlobalConfig.Skin.ToUpper(1)}BackGround"],
+                Foreground = (Brush)Application.Current.Resources["PrimaryTextBrush"],
                 CloseWhenCaretAtBeginning = true
             };
         }
@@ -724,7 +751,7 @@ public partial class MainWindowViewModel : BindableBase
         var _templates = AddCompletions(GlobalConfig.CodeTemplates.Keys);
 
         var currentCode = GetCurrentTextEditor().Text.RemoveRight(_currentInput.Length);
-        var currentHash = currentCode.ComputeHash();
+        var currentHash = currentCode.ComputeSHA256();
 
         //App.LOGGER.LogDebug("Start Code Sense - Variable");
         //if (currentHash == _lastCodeHash)
@@ -749,19 +776,19 @@ public partial class MainWindowViewModel : BindableBase
         // 检查当前输入是否为关键字、变量或方法,并添加到对应的集合中
         foreach (var item in _keywords)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Keyword));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Keyword, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _magics)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Magic));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Magic, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _builtins)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Builtin));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Builtin, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _variables)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Variable));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Variable, desc:GlobalConfig.LocalDocs.TryGet(item, string.Empty)));
         }
         foreach (var item in _templates)
         {
@@ -814,7 +841,7 @@ public partial class MainWindowViewModel : BindableBase
         }
         else
         {
-            App.LOGGER.Error(new NotSupportedException("符号[{0}]不支持自动补全。".FormatEx(symbol)));
+            App.LOGGER.Error(new NotSupportedException("符号[{0}]不支持自动补全。".Format(symbol)));
         }
     }
 

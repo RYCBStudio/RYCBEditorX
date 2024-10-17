@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using RYCBEditorX.ViewModels;
 
 namespace RYCBEditorX.Views;
 /// <summary>
@@ -19,9 +7,13 @@ namespace RYCBEditorX.Views;
 /// </summary>
 public partial class ProgressedInfoTip : HandyControl.Controls.Window
 {
+    private ViewModels.ProgressedTipViewModel _vm;
+
     public ProgressedInfoTip()
     {
         InitializeComponent();
+        _vm = new ViewModels.ProgressedTipViewModel();
+        DataContext = _vm;
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -31,7 +23,15 @@ public partial class ProgressedInfoTip : HandyControl.Controls.Window
 
     private void Init(object sender, RoutedEventArgs e)
     {
-        int i = 0, n = 0;
-        Task.Run(()=>DocstringProcessor.ProcessJsonFiles("F:\\Temp\\Python", ref i, ref n));
+        Dispatcher.BeginInvoke(Change);
+    }
+
+    private async void Change()
+    {
+        int n = 0, t = 0;
+        GlobalConfig.LocalPackages =  await Task.Run(()=>DocstringProcessor.ProcessJsonFiles("F:\\Temp\\Python", ref n, ref t));
+        Dispatcher.Invoke(()=> { ProgBar.Value = n; ProgBar.Maximum = t; });
+        GlobalConfig.LocalDocs = PythonPackageParser.GetPackageMethodDocstrings(GlobalConfig.LocalPackages);
+        Title.Text = "完成";
     }
 }

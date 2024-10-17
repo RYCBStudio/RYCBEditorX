@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
 using Newtonsoft.Json;
 using RYCBEditorX.Utils;
-using RYCBEditorX.ViewModels;
 
 namespace RYCBEditorX;
 public class PythonCodeAnalyser
@@ -57,20 +55,22 @@ public class PythonCodeAnalyser
 
 public class DocstringProcessor
 {
+    private static int _now;
+
     /// <summary>
     /// 读取指定目录下的所有JSON文件，并解析其中的docstrings。
     /// </summary>
     /// <param name="directoryPath">指定目录</param>
-    public static List<Dictionary<string, string>> ProcessJsonFiles(string directoryPath, ref int now, ref int total)
+    public static Dictionary<string, Dictionary<string, string>> ProcessJsonFiles(string directoryPath, ref int now, ref int total)
     {
         var files = Directory.GetFiles(directoryPath, "*.json", SearchOption.AllDirectories);
         total = files.Length;
-        List<Dictionary<string, string>> docStrings = [];
+        Dictionary<string, Dictionary<string, string>> docStrings = [];
         foreach (var file in files)
         {
             var jsonContent = File.ReadAllText(file);
             var docString = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent);
-            docStrings.Add(docString);
+            docStrings[file] = docString;
             now++;
         }
         return docStrings;
@@ -112,3 +112,73 @@ public class DocstringProcessor
     }
 }
 
+public class PythonPackageParser
+{
+    public static Dictionary<string, string> GetPackageMethodDocstrings(Dictionary<string, Dictionary<string, string>> input)
+    {
+        var result = new Dictionary<string, string>();
+
+        foreach (var fileEntry in input)
+        {
+            // Get the absolute file path and method dictionary
+            string filePath = fileEntry.Key;
+            var methods = fileEntry.Value;
+
+            // Extract the package name from the file path
+            string packageName = ExtractPackageName(filePath);
+
+            foreach (var methodEntry in methods)
+            {
+                string methodName = methodEntry.Key;
+                string docstring = methodEntry.Value;
+
+                // Combine package name and method name
+                string key = $"{(packageName.IsNullOrEmpty() ? "" : packageName + ".")}{methodName}";
+
+                // Add to result dictionary
+                result[key] = docstring;
+            }
+        }
+
+        return result;
+    }
+
+    private static string ExtractPackageName(string filePath)
+    {
+        // Convert the file path to a relative path with forward slashes
+        string relativePath = filePath.Replace(Path.DirectorySeparatorChar, '/');
+        string sitePackagesPath = "site-packages/";
+
+        if (relativePath.Contains(sitePackagesPath))
+        {
+            // Extract the package name by removing the site-packages prefix
+            int startIndex = relativePath.IndexOf(sitePackagesPath) + sitePackagesPath.Length;
+
+            // Find the end index of the package name
+            int endIndex = relativePath.IndexOf('/', startIndex);
+
+            // If there's no further slash, assume the package name goes to the end of the path
+            if (endIndex == -1)
+            {
+                endIndex = relativePath.Length;
+            }
+
+            string packageName = relativePath[startIndex..endIndex];
+
+            // If package name is empty, default to 'root'
+            return packageName.IsNullOrEmpty() ? "" : packageName;
+        }
+        else
+        {
+            string packageName = "";
+            if (Directory.Exists(filePath))
+            {
+                packageName = Path.GetDirectoryName(filePath);
+            }else if (File.Exists(filePath))
+            {
+                packageName = Path.GetFileNameWithoutExtension(filePath);
+            }
+            return packageName.IsNullOrEmpty() ? "" : packageName;
+        }
+    }
+}

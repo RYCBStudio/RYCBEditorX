@@ -34,7 +34,7 @@ public class ConsoleHost : UserControl
         consoleTextBox.TextChanged += ConsoleTextBox_TextChanged;
 
         // 将 TextBox 添加到 UserControl 中
-        this.Content = consoleTextBox;
+        Content = consoleTextBox;
     }
 
     private void ConsoleTextBox_TextChanged(object sender, TextChangedEventArgs e)

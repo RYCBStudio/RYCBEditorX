@@ -12,6 +12,8 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:utils="clr-namespace:RYCBEditorX.Utils;assembly=RYCBEditorX.Utils"
     xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
+    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+    xmlns:wfi="[wfi ]clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
     Title="RYCB Editor X Redesigned"
     Width="966"
     Height="470"
@@ -22,6 +24,7 @@
     FontFamily="{DynamicResource Main}"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
     Loaded="Window_Loaded"
+    SizeChanged="Window_SizeChanged"
     WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
@@ -343,12 +346,14 @@
             <TabItem Header="{DynamicResource Main.Bottom.Errors}" />
             <TabItem Header="{DynamicResource Main.Bottom.Console}">
                 <!--<ctrlex:ConsoleHost x:Name="MainConsoleHost" />-->
-                <TextBox
+                <!--<TextBox
                     x:Name="ConsoleHost"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    VerticalContentAlignment="Top" />
-                <!--<Border x:Name="ConsoleHost" />-->
+                    VerticalContentAlignment="Top" />-->
+                <WindowsFormsHost>
+                    <wf:Panel x:Name="ConsoleHost" />
+                </WindowsFormsHost>
             </TabItem>
             <TabItem Header="{DynamicResource Main.Bottom.HPs}">
                 <ListBox BorderBrush="Transparent">
@@ -721,6 +726,32 @@
                             Style="{StaticResource TextBox.Small}"
                             Text="{DynamicResource Main.Bottom.FileSavingTip.Success}"
                             TextChanged="FileSavingTip_TextChanged" />
+                    </StackPanel>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <Button Command="{Binding DownloadUpdateCmd}" Content="{DynamicResource Main.Bottom.Update.Download}" />
+                </StatusBarItem>
+                <StatusBarItem>
+                    <StackPanel
+                        x:Name="DownloadingPanel"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <TextBlock Text="{DynamicResource Main.Bottom.Update.Downloading}" />
+                        <ProgressBar
+                            x:Name="UpdateProgress"
+                            Width="150"
+                            Height="5"
+                            Margin="5,0,5,0"
+                            Style="{StaticResource ProgressBarFlat}" />
+                        <TextBlock x:Name="UpdateRTProgress" Text="--/--" />
+                        <TextBlock
+                            x:Name="DownloadProgress"
+                            Margin="5,0,0,0"
+                            Text="--%" />
+                        <TextBlock
+                            x:Name="DownloadSpeed"
+                            Margin="5,0,0,0"
+                            Text="--/s" />
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>

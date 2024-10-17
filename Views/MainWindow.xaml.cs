@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
+using RYCBEditorX.Crossings;
 using RYCBEditorX.Dialogs.Views;
+using RYCBEditorX.MySQL;
 using RYCBEditorX.Utils;
 
 namespace RYCBEditorX.Views;
@@ -12,13 +16,8 @@ namespace RYCBEditorX.Views;
 public partial class MainWindow : Window
 {
     internal static bool IsCodeRunning = false;
-    public static System.Windows.Forms.Timer autoSaveTimer, autoBackupTimer;
+    public static DispatcherTimer EWResizer = new(), autoSaveTimer, autoBackupTimer;
     public static MainWindow Instance
-    {
-        get; set;
-    }
-
-    internal static List<TabItemStyle> Tabs
     {
         get; set;
     }
@@ -32,8 +31,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Instance = this;
-        Tabs = new List<TabItemStyle>();
-        Tabs = [];
         NotificationsList.ItemsSource = Notifications;
         if (GlobalConfig.Skin == "dark")
         {
@@ -43,6 +40,8 @@ public partial class MainWindow : Window
         {
             MainGrid.Background = (Brush)Application.Current.Resources["LightBackGround"];
         }
+        EWResizer.Tick += ResizeEmbeddedWindow;  //绑定事件
+        EWResizer.Interval = TimeSpan.FromSeconds(0.1);
         //MainTabCtrl.ItemsSource = texts;
         //FluentMessageBox.Theme = "Error";
         //new FluentMessageBox()
@@ -62,11 +61,15 @@ public partial class MainWindow : Window
         }
     }
 
-    private void TextBlock_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void ResizeEmbeddedWindow(object sender, EventArgs e)
     {
-        if (MainTabCtrl.SelectedItem is null) { return; }
-        Tabs.RemoveAt(MainTabCtrl.SelectedIndex);
-        MainTabCtrl.Items.Refresh();
+        if (SetWindow.intPtr != IntPtr.Zero)
+        {
+            var t = new Thread(SetWindow.ResizeWindow);
+            t.Start();  //开线程刷新第三方窗体大小
+            Thread.Sleep(50); //略加延时
+            EWResizer.Stop();  //停止定时器
+        }
     }
 
     private void BtnSelectHLProfile_Click(object sender, RoutedEventArgs e)
@@ -82,9 +85,9 @@ public partial class MainWindow : Window
     private void MInfotest_Click(object sender, RoutedEventArgs e)
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["InfoColor"];
-        LightTip.ViewModelInstance.Icon = LightTip.INFO;
+        LightTip.ViewModelInstance.Icon = Icons.INFO;
         LightTip.ViewModelInstance.Content = "Test";
-        Notifications.Add(new(LightTip.INFO, (Brush)LightTip.Instance.Resources["InfoColor"], LightTip.ViewModelInstance.Content));
+        Notifications.Add(new(Icons.INFO, (Brush)LightTip.Instance.Resources["InfoColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
@@ -94,9 +97,9 @@ public partial class MainWindow : Window
     private void MWarntest_Click(object sender, RoutedEventArgs e)
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["WarnColor"];
-        LightTip.ViewModelInstance.Icon = LightTip.WARN;
+        LightTip.ViewModelInstance.Icon = Icons.WARN;
         LightTip.ViewModelInstance.Content = "Test";
-        Notifications.Add(new(LightTip.WARN, (Brush)LightTip.Instance.Resources["WarnColor"], LightTip.ViewModelInstance.Content));
+        Notifications.Add(new(Icons.WARN, (Brush)LightTip.Instance.Resources["WarnColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
@@ -106,9 +109,9 @@ public partial class MainWindow : Window
     private void MErrtest_Click(object sender, RoutedEventArgs e)
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
-        LightTip.ViewModelInstance.Icon = LightTip.ERROR;
+        LightTip.ViewModelInstance.Icon = Icons.ERROR;
         LightTip.ViewModelInstance.Content = "Test";
-        Notifications.Add(new(LightTip.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
+        Notifications.Add(new(Icons.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
         LightTip.Instance.Show();
@@ -183,8 +186,8 @@ public partial class MainWindow : Window
         var lw = new LoginWindow();
         if (lw.ShowDialog() == true)
         {
-            User.Content = lw.UserName;
-            if (lw.UserName.IsNullOrEmptyEx())
+            User.Content = lw.UsrName;
+            if (lw.UsrName.IsNullOrEmpty())
             {
                 User.Content = oldUserName;
             }
@@ -195,15 +198,35 @@ public partial class MainWindow : Window
         }
     }
 
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        EWResizer.Start();
+    }
+
     private void test_Load(object sender, RoutedEventArgs e)
     {
-        var vm = new ViewModels.ProgressedTipViewModel() { Content = "Test.Load.Python", Now = 0, Title = "loading..." };
-        new ProgressedInfoTip() { DataContext = vm}.Show();
+        new ProgressedInfoTip().Show();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         Focus();
+        if (UpdateInfoCrossing.HasSV)
+        {
+            Extensions.ShowTip.Invoke(Application.Current.Resources["Update.HasSV"].ToString().Format(GlobalConfig.Version), Icons.ERROR);
+        }
+        else if (UpdateInfoCrossing.EOL)
+        {
+            Extensions.ShowTip.Invoke(Application.Current.Resources["Update.EOL"].ToString().Format(GlobalConfig.Version), Icons.WARN);
+        }
+        else if (UpdateInfoCrossing.ComingToEOL)
+        {
+            Extensions.ShowTip.Invoke(Application.Current.Resources["Update.AboutToStopSupport"].ToString().Format(GlobalConfig.Version), Icons.INFO);
+        }
+        else if (UpdateInfoCrossing.HasNew)
+        {
+            Extensions.ShowTip.Invoke(Application.Current.Resources["Update.HasNew"].ToString().Format(UpdateInfoCrossing.NewVersion), Icons.INFO);
+        }
     }
 }
 

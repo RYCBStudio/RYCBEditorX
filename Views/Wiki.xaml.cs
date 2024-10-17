@@ -34,13 +34,13 @@ public partial class Wiki : UserControl
     public void LoadData()
     {
         //var filePath = @"F:\VSProj\repos\RYCBEditorX\bin\Debug\net8.0-windows\Cache\online-cache\comment[range].json";
-        if (Header.Text.IsNullOrEmptyEx())
+        if (Header.Text.IsNullOrEmpty())
         {
             _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils);
         }
         else
         {
-            _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils, $"target='{Header.Text}'");
+            _loader = new MySQL.CommentLoader(MySQLModule.ConnectionUtils, $"target='{Header.Text.Replace("'", "\uffff")}'");
         }
         var comments = _loader.LoadCommentsAsync();
         // 将数据绑定到 ListBox
@@ -56,7 +56,7 @@ public partial class Wiki : UserControl
         string stars = "", string forks = "", string ext = "", string path = "",
         string filename = "", string lang = "", string license = "", string fork = "")
     {
-        return GITHUB_ADVANCED_SEARCH_QUERY.FormatEx(user, repo, created, stars, forks, ext, path, filename, lang, license, fork);
+        return GITHUB_ADVANCED_SEARCH_QUERY.Format(user, repo, created, stars, forks, ext, path, filename, lang, license, fork);
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -114,11 +114,11 @@ public partial class Wiki : UserControl
 
     private void NewCommentBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        if (NewCommentUser.Text.IsNullOrEmptyEx())
+        if (NewCommentUser.Text.IsNullOrEmpty())
         {
             NewCommentUser.Text = "User-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:FFFFFFF").ComputeMd5()[0..4];
         }
-        if (!NewCommentBox.Text.IsNullOrEmptyEx())
+        if (!NewCommentBox.Text.IsNullOrEmpty())
         {
             SendComment.IsEnabled = true;
         }
@@ -130,7 +130,7 @@ public partial class Wiki : UserControl
 
     private void SendComment_Click(object sender, RoutedEventArgs e)
     {
-        if (!NewCommentBox.Text.IsNullOrEmptyEx())
+        if (!NewCommentBox.Text.IsNullOrEmpty())
         {
             _loader.AddComment(NewCommentBox.Text, NewCommentUser.Text, Header.Text);
             LoadData();

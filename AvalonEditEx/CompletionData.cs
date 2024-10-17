@@ -7,7 +7,7 @@ using RYCBEditorX.Views;
 using RYCBEditorX.Utils;
 
 namespace RYCBEditorX;
-public class CompletionData(string text, CompletionDataType type, string templateReference = "") : ICompletionData
+public class CompletionData(string text, CompletionDataType type, string templateReference = "", string desc = "") : ICompletionData
 {
     public ImageSource Image => null;
 
@@ -28,7 +28,7 @@ public class CompletionData(string text, CompletionDataType type, string templat
 
     public object Content => new CodeSenseSelection(Text, GetCandidatesIcon(Type));
 
-    public object Description => Text;
+    public object Description => new CodeSenseDescription(Text, desc.IsNullOrEmpty() ? ((CodeSenseSelection)Content).Candidates : desc);
 
     /// <inheritdoc />
     public double Priority

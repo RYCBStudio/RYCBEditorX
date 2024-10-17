@@ -14,6 +14,10 @@ using System.IO;
 using System.Threading;
 using System.Globalization;
 using Microsoft.VisualStudio.Services.Common;
+using RYCBEditorX.Crossing;
+using System.Collections.Specialized;
+using RYCBEditorX.MySQL;
+using System.Collections.Generic;
 
 namespace RYCBEditorX;
 #pragma warning disable IDE0059 // 不需要赋值
@@ -109,7 +113,7 @@ public partial class App : PrismApplication
         foreach (var item in Directory.EnumerateFiles(STARTUP_PATH + "\\Profiles\\Runners"))
         {
             var icbfp = new ICBFileProcessor(item);
-            GlobalConfig.RunProfile rp = new()
+            RunProfile rp = new()
             {
                 Name = icbfp.GetInfo(ICBFileProcessor.InfoType.name),
                 ScriptPath = icbfp.GetInfo(ICBFileProcessor.InfoType.script),
@@ -125,51 +129,81 @@ public partial class App : PrismApplication
 
     private void LoadConfig()
     {
+        // 载入配置项
         LOGGER.Log("载入配置项...", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
         AppConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         AppSettings = AppConfiguration.AppSettings;
-        
-        var builder = 
+
+        // 初始化配置
         BUILD_TIME = DateTime.Now;
         GlobalConfig.Version = $"{MAJOR_VERSION}.{MINOR_VERSION}.{MICRO_VERSION}";
         GlobalConfig.Revision = REVISION_NUMBER;
-        GlobalConfig.XshdFilePath = AppSettings.Settings["XshdFilePath"].Value;
-        GlobalConfig.LocalizationService = LocalizationService;
-        GlobalConfig.MaximumFileSize = int.Parse(AppSettings.Settings["MaximumFileSize"].Value);
         GlobalConfig.StartupPath = STARTUP_PATH;
         GlobalConfig.CurrentLogger = LOGGER;
         GlobalConfig.Resources = Resources;
-        GlobalConfig.LocalizationString = AppSettings.Settings["Language"].Value;
-        GlobalConfig.AutoBackupInterval = int.Parse(AppSettings.Settings["AutoBackupInterval"].Value);
-        GlobalConfig.ShouldAutoBackup = bool.Parse(AppSettings.Settings["AutoBackup"].Value);
-        GlobalConfig.AutoSaveInterval = int.Parse(AppSettings.Settings["AutoSaveInterval"].Value);
-        GlobalConfig.ShouldAutoSave = bool.Parse(AppSettings.Settings["AutoSave"].Value);
-        GlobalConfig.AutoBackupPath = AppSettings.Settings["AutoBackupPath"].Value;
-        Resources["Main"] = new FontFamily(AppSettings.Settings["Font"].Value);
+
+        // 读取并设置配置项
+        var settings = AppSettings.Settings;
+        GlobalConfig.XshdFilePath = settings["XshdFilePath"].Value;
+        GlobalConfig.LocalizationService = LocalizationService;
+        GlobalConfig.PythonPath = settings["PythonPath"].Value;
+        GlobalConfig.MaximumFileSize = int.Parse(settings["MaximumFileSize"].Value);
+        GlobalConfig.LocalizationString = settings["Language"].Value;
+        GlobalConfig.AutoBackupInterval = int.Parse(settings["AutoBackupInterval"].Value);
+        GlobalConfig.ShouldAutoBackup = bool.Parse(settings["AutoBackup"].Value);
+        GlobalConfig.AutoSaveInterval = int.Parse(settings["AutoSaveInterval"].Value);
+        GlobalConfig.ShouldAutoSave = bool.Parse(settings["AutoSave"].Value);
+        GlobalConfig.AutoBackupPath = settings["AutoBackupPath"].Value;
+        GlobalConfig.Downloading.ParallelDownload = bool.Parse(settings["Downloading.ParallelDownload"].Value);
+        GlobalConfig.Downloading.ParallelCount = int.Parse(settings["Downloading.ParallelCount"].Value);
+        Resources["Main"] = new FontFamily(settings["Font"].Value);
 
         RefreshItems();
 
+        // 如果 XshdFilePath 为空，设置默认值并保存
         if (GlobalConfig.XshdFilePath.IsNullOrEmpty())
         {
-            AppSettings.Settings["XshdFilePath"].Value = STARTUP_PATH + "\\Highlightings";
+            settings["XshdFilePath"].Value = Path.Combine(STARTUP_PATH, "Highlightings");
             AppConfiguration.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("appSettings");
-            GlobalConfig.XshdFilePath = AppSettings.Settings["XshdFilePath"].Value;
+            GlobalConfig.XshdFilePath = settings["XshdFilePath"].Value;
         }
 
+        // 载入程序主题与颜色
+        LoadSkin(settings["Skin"].Value);
+
+        // 载入编辑器配置项
+        LoadEditorSettings(settings);
+
+        // 载入代码模板
+        LoadCodeTemplates(Path.Combine(STARTUP_PATH, "Profiles", "Templates", "python", "builtin.json"));
+
+        // 注册跨域访问
+        RegisterCrossings();
+    }
+
+    // 方法定义
+    private void LoadSkin(string skin)
+    {
         LOGGER.Log("载入程序主题与颜色", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
-        var skin = AppSettings.Settings["Skin"].Value;
         GlobalConfig.Skin = skin;
         UpdateResourceDictionary(GlobalConfig.GetSkin(skin), 0);
+    }
 
+    private void LoadEditorSettings(KeyValueConfigurationCollection settings)
+    {
         LOGGER.Log("载入编辑器配置项", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
-        GlobalConfig.Editor.Theme = AppSettings.Settings["Editor.Theme"].Value;
-        GlobalConfig.Editor.ShowLineNumber = bool.Parse(AppSettings.Settings["Editor.ShowLineNum"].Value);
-        GlobalConfig.Editor.FontFamilyName = AppSettings.Settings["Editor.FontName"].Value;
-        GlobalConfig.Editor.FontSize = Convert.ToInt32(AppSettings.Settings["Editor.FontSize"].Value);
+        GlobalConfig.Editor.Theme = settings["Editor.Theme"].Value;
+        GlobalConfig.Editor.ShowLineNumber = bool.Parse(settings["Editor.ShowLineNum"].Value);
+        GlobalConfig.Editor.FontFamilyName = settings["Editor.FontName"].Value;
+        GlobalConfig.Editor.FontSize = int.Parse(settings["Editor.FontSize"].Value);
+    }
 
+    private void LoadCodeTemplates(string path)
+    {
         LOGGER.Log("载入代码模板", module: EnumLogModule.CUSTOM, customModuleName: "初始化:配置");
-        GlobalConfig.CodeTemplates.AddRange(Custom.TemplateAnalyser.GetCodeImplements(STARTUP_PATH + "\\Profiles\\Templates\\python\\builtin.json"));
+        var codeTemplates = Custom.TemplateAnalyser.GetCodeImplements(path);
+        GlobalConfig.CodeTemplates.AddRange(codeTemplates);
     }
 
     private void UpdateResourceDictionary(string resourceStr, int pos)
@@ -186,6 +220,15 @@ public partial class App : PrismApplication
         Resources.MergedDictionaries.Insert(pos, resource);
     }
     #region Prism Application
+
+    internal void RegisterCrossings()
+    {
+        LOGGER.Log("注册跨窗口通信", module: EnumLogModule.CUSTOM, customModuleName: "初始化:通信");
+        new DialogCrossing().Register();
+        new UpdateCrossing().Register();
+        new WikiLoader().Register();
+    }
+
     protected override void OnInitialized()
     {
         splash.Dispatcher.Invoke(splash.Close);
@@ -239,9 +282,9 @@ public partial class App : PrismApplication
     private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
-        LightTip.ViewModelInstance.Icon = LightTip.ERROR;
+        LightTip.ViewModelInstance.Icon = Icons.ERROR;
         LightTip.ViewModelInstance.Content = $"{e.Exception.GetType()}\n{e.Exception.Message}";
-        Views.MainWindow.Notifications.Add(new(LightTip.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
+        Views.MainWindow.Notifications.Add(new(Icons.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
         Views.MainWindow.Instance.NotificationsList.Items.Refresh();
         LightTip.Instance.Show();
         Views.MainWindow.Instance.NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
@@ -251,6 +294,12 @@ public partial class App : PrismApplication
         try
         {
             LOGGER.Log("处理成功。", module: EnumLogModule.CUSTOM, customModuleName: "异常处理");
+            var _ex = e.Exception;
+            while (_ex.InnerException is not null)
+            {
+                LOGGER.Error(_ex.InnerException);
+                _ex = _ex.InnerException;
+            }
         }
         catch (Exception ex)
         {

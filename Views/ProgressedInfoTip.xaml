@@ -6,15 +6,18 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:RYCBEditorX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:RYCBEditorX.ViewModels"
     Title="ProgressedInfoTip"
     Width="350"
-    Height="90"
+    Height="110"
+    d:DataContext="{d:DesignInstance Type=viewmodels:ProgressedTipViewModel}"
     Loaded="Init"
     WindowStyle="None"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -37,6 +40,11 @@
             DotCount="7"
             DotDiameter="10"
             Foreground="{DynamicResource PrimaryTextBrush}" />
+        <ProgressBar
+            x:Name="ProgBar"
+            Grid.Row="4"
+            Maximum="{Binding Total, Mode=OneWay}"
+            Value="{Binding Now, Mode=OneWay}" />
         <Label
             x:Name="lbInfo"
             Grid.Row="2"

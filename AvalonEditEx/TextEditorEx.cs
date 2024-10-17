@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using HandyControl.Tools.Extension;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -18,18 +20,27 @@ public class TextEditorEx : TextEditor
     public TextEditorEx()
     {
         backgroundRenderer.IsBreakpointSet = IsBreakpointSet;
-        this.TextChanged += OnTextChanged;
-        this.PreviewKeyDown += TextEditorEx_PreviewKeyDown;
-        this.KeyDown += TextEditorEx_KeyDown;
-        this.KeyUp += TextEditorEx_KeyUp;
-        this.TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
-        this.TextArea.MouseLeftButtonDown += (sender, e) =>
+        TextChanged += OnTextChanged;
+        PreviewKeyDown += TextEditorEx_PreviewKeyDown;
+        KeyDown += TextEditorEx_KeyDown;
+        KeyUp += TextEditorEx_KeyUp;
+        TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
+        TextArea.MouseLeftButtonDown += (sender, e) =>
         {
-            var position = e.GetPosition(this.TextArea);
+            var position = e.GetPosition(TextArea);
             var line = TextArea.TextView.GetDocumentLineByVisualTop(position.Y).LineNumber;
 
             ToggleBreakpoint(line);
         };
+        TextArea.TextView.SetValue(Typography.StandardLigaturesProperty, false);
+        TextArea.SetValue(Typography.StandardLigaturesProperty, false);
+        Options.HighlightCurrentLine = true;
+        TextArea.TextView.VisualLinesChanged += (s, e) =>
+        {
+            TextArea.TextView.CurrentLineBackground?.SetValue(OpacityProperty, .5f);
+        };
+        //this.TextArea.OverstrikeMode = false;
+        SetValue(Typography.StandardLigaturesProperty, false);
     }
 
     private void TextEditorEx_KeyUp(object sender, KeyEventArgs e)
@@ -52,7 +63,7 @@ public class TextEditorEx : TextEditor
     {
         if (_ctrl & e.Key == Key.W) {
             CustomCmd.Invoke();
-            Wiki.Instance.Header.Text = this.SelectedText;
+            Wiki.Instance.Header.Text = SelectedText;
             Wiki.Instance.LoadData();
         }
     }
