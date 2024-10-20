@@ -31,11 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdig.Wpf", "..\markdig.w
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdig.Wpf.SampleAppCustomized", "..\markdig.wpf\src\Markdig.Wpf.SampleAppCustomized\Markdig.Wpf.SampleAppCustomized.csproj", "{92E35014-FEA8-41D1-BD8D-CC9507732BE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RYCBEditorX.WpfTest", "..\RYCBEditorX.WpfTest\RYCBEditorX.WpfTest.csproj", "{22336662-ACD9-416C-B644-5B448FED838E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.WpfTest", "..\RYCBEditorX.WpfTest\RYCBEditorX.WpfTest.csproj", "{22336662-ACD9-416C-B644-5B448FED838E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdig.Wpf.SampleApp", "..\markdig.wpf\src\Markdig.Wpf.SampleApp\Markdig.Wpf.SampleApp.csproj", "{9708149B-FB95-4831-A011-DB9739503CDF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdig", "..\markdig-master\src\Markdig\Markdig.csproj", "{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,12 +102,6 @@ Global
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release_Signed|Any CPU.Build.0 = Release|Any CPU
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Release_Signed|Any CPU.ActiveCfg = Release|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Release_Signed|Any CPU.Build.0 = Release|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FA91E30E-1672-4DA3-A41D-B403B2A1F85B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,11 +6,12 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:RYCBEditorX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:md="clr-namespace:MdXaml;assembly=MdXaml"
+    xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
     xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     d:DesignHeight="1000"
     d:DesignWidth="300"
     FontFamily="{DynamicResource Main}"
+    Loaded="Init"
     mc:Ignorable="d">
     <UserControl.Resources>
         <FontFamily x:Key="Iconfont">/RYCBEditorX;component/Assets/Fonts/#ali-ifont</FontFamily>
@@ -96,10 +97,11 @@
                                         Foreground="Gray"
                                         IsReadOnly="True"
                                         Text="{Binding Uid}" />
-                                    <md:MarkdownScrollViewer
+                                    <md:MarkdownViewer
                                         Grid.Row="2"
                                         Foreground="{StaticResource PrimaryTextBrush}"
-                                        Markdown="{Binding CommentText}" />
+                                        Markdown="{Binding CommentText}"
+                                        Theme="Dark" />
                                     <hc:FlexPanel
                                         Grid.Row="3"
                                         HorizontalAlignment="Right"
@@ -113,10 +115,10 @@
                                             Tag="{Binding}" />
                                         <Label Content="{Binding Likes}" />
                                         <Button
+                                            Click="DeleteComment"
                                             Content="&#xe628;"
                                             FontFamily="{StaticResource Iconfont}"
                                             Style="{StaticResource ButtonBaseStyle}"
-                                            Click="DeleteComment"
                                             Tag="{Binding}" />
                                     </hc:FlexPanel>
                                 </Grid>

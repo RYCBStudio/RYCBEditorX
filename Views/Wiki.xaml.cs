@@ -172,4 +172,9 @@ public partial class Wiki : UserControl
         _loader.DeleteComment((((Button)sender).Tag as Comment).Uid);
         LoadData();
     }
+
+    private void Init(object sender, RoutedEventArgs e)
+    {
+        
+    }
 }
