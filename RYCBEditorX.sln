@@ -17,6 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Dialogs", "..\R
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.Utils", "..\RYCBEditorX.Utils\RYCBEditorX.Utils.csproj", "{7364DC27-AD15-44AF-BAF0-DABD49CB1B7D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9242872E-35FF-42C2-9EF1-A8CF411D2012} = {9242872E-35FF-42C2-9EF1-A8CF411D2012}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.MySQL", "..\RYCBEditorX.MySQL\RYCBEditorX.MySQL.csproj", "{FE25DED2-540C-4423-A38F-74C90386C6CF}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -34,6 +37,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RYCBEditorX.WpfTest", "..\RYCBEditorX.WpfTest\RYCBEditorX.WpfTest.csproj", "{22336662-ACD9-416C-B644-5B448FED838E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdig.Wpf.SampleApp", "..\markdig.wpf\src\Markdig.Wpf.SampleApp\Markdig.Wpf.SampleApp.csproj", "{9708149B-FB95-4831-A011-DB9739503CDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RYCBEditorX.Welcome", "..\RYCBEditorWelcome\RYCBEditorX.Welcome.csproj", "{70237DFC-EA50-4514-899A-090FD394C4B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9242872E-35FF-42C2-9EF1-A8CF411D2012} = {9242872E-35FF-42C2-9EF1-A8CF411D2012}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +110,12 @@ Global
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release_Signed|Any CPU.Build.0 = Release|Any CPU
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9708149B-FB95-4831-A011-DB9739503CDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Release_Signed|Any CPU.ActiveCfg = Release|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Release_Signed|Any CPU.Build.0 = Release|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70237DFC-EA50-4514-899A-090FD394C4B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

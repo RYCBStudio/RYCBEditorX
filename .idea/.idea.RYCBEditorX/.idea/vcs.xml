@@ -5,5 +5,6 @@
     <mapping directory="$PROJECT_DIR$/../RYCBEditorX.Dialogs" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../RYCBEditorX.MySQL" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../RYCBEditorX.Utils" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../markdig.wpf" vcs="Git" />
   </component>
 </project>

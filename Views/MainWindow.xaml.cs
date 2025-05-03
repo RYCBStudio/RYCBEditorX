@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using HandyControl.Tools.Extension;
 using RYCBEditorX.Crossings;
 using RYCBEditorX.Dialogs.Views;
 using RYCBEditorX.MySQL;
@@ -86,7 +89,7 @@ public partial class MainWindow : Window
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["InfoColor"];
         LightTip.ViewModelInstance.Icon = Icons.INFO;
-        LightTip.ViewModelInstance.Content = "Test";
+        LightTip.ViewModelInstance.Content = "# Test-Info \nThis is a test information.";
         Notifications.Add(new(Icons.INFO, (Brush)LightTip.Instance.Resources["InfoColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
@@ -98,7 +101,7 @@ public partial class MainWindow : Window
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["WarnColor"];
         LightTip.ViewModelInstance.Icon = Icons.WARN;
-        LightTip.ViewModelInstance.Content = "Test";
+        LightTip.ViewModelInstance.Content = "# Test-Warn \nThis is a test warning.";
         Notifications.Add(new(Icons.WARN, (Brush)LightTip.Instance.Resources["WarnColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
@@ -110,7 +113,7 @@ public partial class MainWindow : Window
     {
         LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
         LightTip.ViewModelInstance.Icon = Icons.ERROR;
-        LightTip.ViewModelInstance.Content = "Test";
+        LightTip.ViewModelInstance.Content = "# Test-Error \nThis is a test error.";
         Notifications.Add(new(Icons.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
         NotificationsList.Items.Refresh();
         GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
@@ -211,6 +214,22 @@ public partial class MainWindow : Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         Focus();
+        Task.Run(new Action(() =>
+        {
+            while (!MySQLModule.ConnectionUtils.ConnectionOpened) ;
+            Dispatcher.Invoke(() => UpdateProgress.Maximum = GlobalConfig.TotalLoadedOnline - 1);
+            while (GlobalConfig.CurrentLoadedOnlineIndex <= GlobalConfig.TotalLoadedOnline - 1)
+            {
+                Dispatcher.Invoke(() => { UpdateProgress.Value = GlobalConfig.CurrentLoadedOnlineIndex;
+                    UpdateRTProgress.Text = string.Format("{0}/{1}", GlobalConfig.CurrentLoadedOnlineIndex + 1, GlobalConfig.TotalLoadedOnline);
+                    DownloadProgress.Text = string.Format("{0:F2}%", Math.Round((double)GlobalConfig.CurrentLoadedOnlineIndex / (GlobalConfig.TotalLoadedOnline - 1), 4) * 100);
+                });
+            }
+            Dispatcher.Invoke(() => { UpdateTip.Text = Application.Current.Resources["Main.Bottom.Analyzing.Suc"].ToString();
+                UpdateProgress.Foreground = (Brush)Application.Current.Resources["SuccessBrush"];
+            });
+            Dispatcher.InvokeAsync(() => { Thread.Sleep(1000); DownloadingPanel.Hide(); });
+        }));
         if (UpdateInfoCrossing.HasSV)
         {
             Extensions.ShowTip.Invoke(Application.Current.Resources["Update.HasSV"].ToString().Format(GlobalConfig.Version), Icons.ERROR);

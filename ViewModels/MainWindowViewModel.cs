@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
-{
+{   
     #region 变量&命令
     private Process _runnerProc;
     public DelegateCommand NewFileCmd
@@ -129,10 +129,6 @@ public partial class MainWindowViewModel : BindableBase
     {
         get; set;
     }
-    public DelegateCommand DownloadUpdateCmd
-    {
-        get; set;
-    }
     #endregion
     public MainWindowViewModel()
     {
@@ -157,7 +153,6 @@ public partial class MainWindowViewModel : BindableBase
         GotoLineCmd = new DelegateCommand(GotoLine);
         ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
         LACCmd = new DelegateCommand(OpenLAC);
-        DownloadUpdateCmd = new DelegateCommand(DownloadUpdate);
 
         if (GlobalConfig.ShouldAutoSave)
         {
@@ -175,12 +170,6 @@ public partial class MainWindowViewModel : BindableBase
             };
             MainWindow.autoBackupTimer.Tick += SaveFile;
         }
-    }
-
-    internal void DownloadUpdate()
-    {
-        UpdateUtils.StartAsync();
-        MainWindow.Instance.DownloadingPanel.Show();
     }
 
     internal void OpenLAC()
@@ -531,6 +520,8 @@ public partial class MainWindowViewModel : BindableBase
                 Tag = textEditorEx
             };
             var mdDoc = Markdown.ToHtml(textEditorEx.Text);
+            mdDoc = mdDoc.Insert(0, "<head>\n<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css\">\r\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js\"></script>\n</head>\n<body>");
+            mdDoc = mdDoc.Insert(mdDoc.Length, "\n</body>\n<script>\n hljs.initHighlightingOnLoad();\n</script>");
             testTextEditorExHTML.Text = mdDoc;
             webView.Loaded += async (s, e) =>
             {
@@ -539,9 +530,9 @@ public partial class MainWindowViewModel : BindableBase
                 if (GlobalConfig.Skin == "dark")
                 {
                     await webView.ExecuteScriptAsync(@"
-                document.body.style.backgroundColor = '#1C1C1C';
-                document.body.style.color = '#FFFFFF';
-                ");
+                    document.body.style.backgroundColor = '#1C1C1C';
+                    document.body.style.color = '#FFFFFF';
+                    ");
                 }
             };
             return tabItem;

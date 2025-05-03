@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:RYCBEditorX.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+    xmlns:mdx="clr-namespace:RYCBEditorX.Utils;assembly=RYCBEditorX.Utils"
     xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     d:DesignHeight="1000"
     d:DesignWidth="300"
@@ -22,7 +23,13 @@
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Button x:Name="LoadBtn" Click="Button_Click">Load</Button>
+        <TextBlock x:Name="ThemePlaceHolder" Visibility="Hidden" />
+        <Button
+            x:Name="LoadBtn"
+            Click="Button_Click"
+            IsEnabled="False">
+            Load
+        </Button>
         <hc:ScrollViewer x:Name="Main" Grid.Row="1">
             <Grid>
                 <Grid.RowDefinitions>
@@ -97,11 +104,17 @@
                                         Foreground="Gray"
                                         IsReadOnly="True"
                                         Text="{Binding Uid}" />
-                                    <md:MarkdownViewer
+                                    <mdx:MarkdownViewer
                                         Grid.Row="2"
                                         Foreground="{StaticResource PrimaryTextBrush}"
                                         Markdown="{Binding CommentText}"
-                                        Theme="Dark" />
+                                        Theme="{Binding Text, ElementName=ThemePlaceHolder}">
+                                        <mdx:MarkdownViewer.Resources>
+                                            <Style TargetType="FlowDocumentScrollViewer">
+                                                <Setter Property="IsToolBarVisible" Value="False" />
+                                            </Style>
+                                        </mdx:MarkdownViewer.Resources>
+                                    </mdx:MarkdownViewer>
                                     <hc:FlexPanel
                                         Grid.Row="3"
                                         HorizontalAlignment="Right"

@@ -475,14 +475,18 @@
                                         FontSize="28"
                                         Foreground="{Binding IconBrush}"
                                         Text="{Binding Icon}" />
-                                    <TextBox
+                                    <utils:MarkdownViewer
                                         x:Name="Content"
                                         VerticalContentAlignment="Center"
                                         BorderBrush="Transparent"
                                         FontSize="12"
-                                        IsReadOnly="True"
-                                        Text="{Binding Content}"
-                                        TextWrapping="WrapWithOverflow" />
+                                        Markdown="{Binding Content}">
+                                        <utils:MarkdownViewer.Resources>
+                                            <Style TargetType="FlowDocumentScrollViewer">
+                                                <Setter Property="IsToolBarVisible" Value="False" />
+                                            </Style>
+                                        </utils:MarkdownViewer.Resources>
+                                    </utils:MarkdownViewer>
                                 </DockPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -729,14 +733,8 @@
                     </StackPanel>
                 </StatusBarItem>
                 <StatusBarItem>
-                    <Button Command="{Binding DownloadUpdateCmd}" Content="{DynamicResource Main.Bottom.Update.Download}" />
-                </StatusBarItem>
-                <StatusBarItem>
-                    <StackPanel
-                        x:Name="DownloadingPanel"
-                        Orientation="Horizontal"
-                        Visibility="Collapsed">
-                        <TextBlock Text="{DynamicResource Main.Bottom.Update.Downloading}" />
+                    <StackPanel x:Name="DownloadingPanel" Orientation="Horizontal">
+                        <TextBlock x:Name="UpdateTip" Text="{DynamicResource Main.Bottom.Analyzing}" />
                         <ProgressBar
                             x:Name="UpdateProgress"
                             Width="150"
@@ -748,10 +746,6 @@
                             x:Name="DownloadProgress"
                             Margin="5,0,0,0"
                             Text="--%" />
-                        <TextBlock
-                            x:Name="DownloadSpeed"
-                            Margin="5,0,0,0"
-                            Text="--/s" />
                     </StackPanel>
                 </StatusBarItem>
             </StatusBar>
@@ -825,12 +819,14 @@
                     x:Name="User"
                     Click="Login"
                     Content="{DynamicResource Main.User.Unlogin}"
-                    DockPanel.Dock="Right" />
+                    DockPanel.Dock="Right"
+                    IsEnabled="False" />
                 <Button
                     x:Name="Test_LoadPython"
                     Click="test_Load"
                     Content="Load"
-                    DockPanel.Dock="Right" />
+                    DockPanel.Dock="Right"
+                    IsEnabled="False" />
             </DockPanel>
         </ToolBar>
     </Grid>

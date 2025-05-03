@@ -9,7 +9,7 @@ public class UpdateCrossing : ICrossing
 {
     public static void Downloader_DownloadProgressChanged(object sender, Downloader.DownloadProgressChangedEventArgs e)
     {
-        MainWindow.Instance.Dispatcher.Invoke(() => MainWindow.Instance.DownloadSpeed.Text = ProcessFileSize((long)e.BytesPerSecondSpeed) + "/s");
+        //MainWindow.Instance.Dispatcher.Invoke(() => MainWindow.Instance.DownloadSpeed.Text = ProcessFileSize((long)e.BytesPerSecondSpeed) + "/s");
         var r = ProcessFileSize(e.ReceivedBytesSize);
         var t = ProcessFileSize(e.TotalBytesToReceive);
         MainWindow.Instance.Dispatcher.Invoke(() => MainWindow.Instance.UpdateRTProgress.Text = $" {r} / {t}");

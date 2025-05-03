@@ -28,6 +28,7 @@ public partial class Wiki : UserControl
     {
         InitializeComponent();
         Loading.Show();
+        ThemePlaceHolder.Text = GlobalConfig.Skin;
         Instance = this;
     }
 
