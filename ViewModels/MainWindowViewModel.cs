@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
-{   
+{
     #region 变量&命令
     private Process _runnerProc;
     public DelegateCommand NewFileCmd
@@ -129,6 +129,10 @@ public partial class MainWindowViewModel : BindableBase
     {
         get; set;
     }
+    public DelegateCommand SettingsCmd
+    {
+        get; set;
+    }
     #endregion
     public MainWindowViewModel()
     {
@@ -153,6 +157,7 @@ public partial class MainWindowViewModel : BindableBase
         GotoLineCmd = new DelegateCommand(GotoLine);
         ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
         LACCmd = new DelegateCommand(OpenLAC);
+        SettingsCmd = new DelegateCommand(OpenSettings);
 
         if (GlobalConfig.ShouldAutoSave)
         {
@@ -175,6 +180,11 @@ public partial class MainWindowViewModel : BindableBase
     internal void OpenLAC()
     {
         new LicensesAndCopyright().ShowDialog();
+    }
+
+    internal void OpenSettings()
+    {
+        new Settings().ShowDialog();
     }
 
     internal void ConfigureRunProfiles()
@@ -767,19 +777,19 @@ public partial class MainWindowViewModel : BindableBase
         // 检查当前输入是否为关键字、变量或方法,并添加到对应的集合中
         foreach (var item in _keywords)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Keyword, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Keyword, desc: GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _magics)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Magic, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Magic, desc: GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _builtins)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Builtin, desc:GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Builtin, desc: GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
         foreach (var item in _variables)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.Variable, desc:GlobalConfig.LocalDocs.TryGet(item, string.Empty)));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.Variable, desc: GlobalConfig.LocalDocs.TryGet(item, string.Empty)));
         }
         foreach (var item in _templates)
         {

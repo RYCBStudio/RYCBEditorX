@@ -47,6 +47,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <SolidColorBrush x:Key="InfoColor" Color="#0078D7" />
+        <SolidColorBrush x:Key="WarnColor" Color="#FFEACF1D" />
+        <SolidColorBrush x:Key="ErrorColor" Color="#FFE3371F" />
         <utils:FileSavingTipConverter x:Key="Fstc" />
     </Window.Resources>
     <Window.InputBindings>
@@ -270,7 +273,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Options}">
-                <MenuItem Header="{DynamicResource Main.Menu.Options.Settings}" InputGestureText="Ctrl+Alt+S">
+                <MenuItem Command="{Binding SettingsCmd}" Header="{DynamicResource Main.Menu.Options.Settings}" InputGestureText="Ctrl+Alt+S">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource Iconfont}"
@@ -827,6 +830,17 @@
                     Content="Load"
                     DockPanel.Dock="Right"
                     IsEnabled="False" />
+            </DockPanel>
+            <DockPanel x:Name="NetworkWarningPanel" Visibility="Collapsed">
+                <TextBlock
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource Iconfont}"
+                    FontSize="20"
+                    Foreground="{StaticResource WarnColor}"
+                    Text="&#xE6D1;" />
+                <TextBlock Text="No network connection." />
             </DockPanel>
         </ToolBar>
     </Grid>

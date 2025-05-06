@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +10,7 @@ using RYCBEditorX.Crossings;
 using RYCBEditorX.Dialogs.Views;
 using RYCBEditorX.MySQL;
 using RYCBEditorX.Utils;
+using RYCBEditorX.Utils.Crossings;
 
 namespace RYCBEditorX.Views;
 /// <summary>
@@ -45,19 +45,12 @@ public partial class MainWindow : Window
         }
         EWResizer.Tick += ResizeEmbeddedWindow;  //绑定事件
         EWResizer.Interval = TimeSpan.FromSeconds(0.1);
-        //MainTabCtrl.ItemsSource = texts;
-        //FluentMessageBox.Theme = "Error";
-        //new FluentMessageBox()
-        //{
-        //    DataContext = new FluentMessageBoxViewModel()
-        //    {
-        //        Title = "Test",
-        //        Message = App.AppSettings.Settings["Test"].OrderBy_Value,
-        //    },
-        //}.ShowDialog();
+        if (!Utils.Update.CloudSourceConnectionTester.TestConnection())
+        {
+            NetworkWarningPanel.Visibility = Visibility.Visible;
+        }
 #pragma warning disable CA1806 // 不要忽略方法结果
         new LightTip(this);
-#pragma warning restore CA1806 // 不要忽略方法结果
         foreach (var item in GlobalConfig.CurrentProfiles)
         {
             RunProfilesComboBox.Items.Add(item.Name);
@@ -220,15 +213,19 @@ public partial class MainWindow : Window
             Dispatcher.Invoke(() => UpdateProgress.Maximum = GlobalConfig.TotalLoadedOnline - 1);
             while (GlobalConfig.CurrentLoadedOnlineIndex <= GlobalConfig.TotalLoadedOnline - 1)
             {
-                Dispatcher.Invoke(() => { UpdateProgress.Value = GlobalConfig.CurrentLoadedOnlineIndex;
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateProgress.Value = GlobalConfig.CurrentLoadedOnlineIndex;
                     UpdateRTProgress.Text = string.Format("{0}/{1}", GlobalConfig.CurrentLoadedOnlineIndex + 1, GlobalConfig.TotalLoadedOnline);
                     DownloadProgress.Text = string.Format("{0:F2}%", Math.Round((double)GlobalConfig.CurrentLoadedOnlineIndex / (GlobalConfig.TotalLoadedOnline - 1), 4) * 100);
                 });
             }
-            Dispatcher.Invoke(() => { UpdateTip.Text = Application.Current.Resources["Main.Bottom.Analyzing.Suc"].ToString();
+            Dispatcher.Invoke(() =>
+            {
+                UpdateTip.Text = Application.Current.Resources["Main.Bottom.Analyzing.Suc"].ToString();
                 UpdateProgress.Foreground = (Brush)Application.Current.Resources["SuccessBrush"];
+                Thread.Sleep(1000); DownloadingPanel.Hide();
             });
-            Dispatcher.InvokeAsync(() => { Thread.Sleep(1000); DownloadingPanel.Hide(); });
         }));
         if (UpdateInfoCrossing.HasSV)
         {
@@ -245,6 +242,9 @@ public partial class MainWindow : Window
         else if (UpdateInfoCrossing.HasNew)
         {
             Extensions.ShowTip.Invoke(Application.Current.Resources["Update.HasNew"].ToString().Format(UpdateInfoCrossing.NewVersion), Icons.INFO);
+        }
+        if (GlobalMsgCrossing.HasGlobalMsg) {
+            Extensions.ShowTip.Invoke(GlobalMsgCrossing.GlobalMsg[0].Text, Icons.INFO);
         }
     }
 }
