@@ -28,7 +28,7 @@ public class CompletionData(string text, CompletionDataType type, string templat
 
     public object Content => new CodeSenseSelection(Text, GetCandidatesIcon(Type));
 
-    public object Description => new CodeSenseDescription(Text, desc.IsNullOrEmpty() ? ((CodeSenseSelection)Content).Candidates : desc);
+    public object Description => new CodeSenseDescription(Text, desc.IsNullOrEmpty() ? ((CodeSenseSelection)Content).Candidates : desc, templateReference);
 
     /// <inheritdoc />
     public double Priority

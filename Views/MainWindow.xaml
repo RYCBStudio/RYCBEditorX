@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:avalonex="clr-namespace:RYCBEditorX.AvalonEditEx"
-    xmlns:ctrlex="clr-namespace:RYCBEditorX.ControlEx"
+    xmlns:cx="clr-namespace:RYCBEditorX.ControlEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:RYCBEditorX.Views"
@@ -273,7 +273,10 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Options}">
-                <MenuItem Command="{Binding SettingsCmd}" Header="{DynamicResource Main.Menu.Options.Settings}" InputGestureText="Ctrl+Alt+S">
+                <MenuItem
+                    Command="{Binding SettingsCmd}"
+                    Header="{DynamicResource Main.Menu.Options.Settings}"
+                    InputGestureText="Ctrl+Alt+S">
                     <MenuItem.Icon>
                         <TextBlock
                             FontFamily="{StaticResource Iconfont}"
@@ -284,8 +287,8 @@
             </MenuItem>
             <MenuItem FontSize="12" Header="{DynamicResource Main.Menu.Tools}">
                 <MenuItem Header="{DynamicResource Main.Menu.Tools.App}">
-                    <MenuItem Header="{DynamicResource Main.Menu.Tools.App.Restart}" />
-                    <MenuItem Header="{DynamicResource Main.Menu.Tools.App.Exit}" />
+                    <MenuItem Command="{Binding RestartCmd}" Header="{DynamicResource Main.Menu.Tools.App.Restart}" />
+                    <MenuItem Command="{Binding ExitCmd}" Header="{DynamicResource Main.Menu.Tools.App.Exit}" />
                     <MenuItem Header="{DynamicResource Main.Menu.Tools.App.MessageTest}">
                         <MenuItem Click="MInfotest_Click" Header="Info" />
                         <MenuItem Click="MWarntest_Click" Header="Warn" />
@@ -495,29 +498,29 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <Grid Grid.Row="2">
-                        <Button
+                        <cx:DescBtn
                             x:Name="BtnClearSelected"
                             Margin="5"
                             HorizontalAlignment="Right"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            Click="BtnClearSelected_Click"
-                            Content="&#xe631;"
-                            FontFamily="{StaticResource Iconfont}"
-                            FontSize="16"
+                            ButtonClick="BtnClearSelected_Click"
+                            ButtonContent="&#xe631;"
+                            ButtonFontFamily="{StaticResource Iconfont}"
+                            ButtonFontSize="16"
+                            ButtonStyle="{StaticResource ButtonDashed.Small}"
+                            Desc="{DynamicResource Main.SideBar.Notifications.CS}"
+                            DescPosition="Bottom"
                             Foreground="{DynamicResource PrimaryTextBrush}"
-                            ToolTip="Clear Selected"
                             Visibility="Collapsed" />
-                        <Button
+                        <cx:DescBtn
                             HorizontalAlignment="Left"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            Click="BtnClearAll_Click"
-                            Content="&#xe628;"
-                            FontFamily="{StaticResource Iconfont}"
-                            FontSize="16"
-                            Foreground="{DynamicResource PrimaryTextBrush}"
-                            ToolTip="Clear All" />
+                            ButtonClick="BtnClearAll_Click"
+                            ButtonContent="&#xe628;"
+                            ButtonFontFamily="{StaticResource Iconfont}"
+                            ButtonFontSize="16"
+                            ButtonStyle="{StaticResource ButtonDashed.Small}"
+                            Desc="{DynamicResource Main.SideBar.Notifications.CA}"
+                            DescPosition="Bottom"
+                            Foreground="{DynamicResource PrimaryTextBrush}" />
                     </Grid>
                 </Grid>
             </Border>
@@ -760,13 +763,15 @@
             Background="Transparent">
             <DockPanel Width="{Binding Width, ElementName=MainToolBar}" LastChildFill="True">
                 <hc:SimpleStackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                    <Button
+                    <cx:DescBtn
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding RunCmd}"
-                        Content="&#xe65d;"
-                        FontFamily="{StaticResource Iconfont}"
-                        FontSize="15"
-                        Style="{StaticResource ButtonInfo}" />
+                        ButtonCommand="{Binding RunCmd}"
+                        ButtonContent="&#xe65d;"
+                        ButtonFontFamily="{StaticResource Iconfont}"
+                        ButtonFontSize="15"
+                        ButtonStyle="{StaticResource ButtonInfo}"
+                        Desc="{DynamicResource Main.ToolBar.Run}"
+                        DescPosition="Right" />
                     <hc:TransitioningContentControl TransitionMode="Left2Right">
                         <hc:FlexPanel x:Name="RunPanel" Visibility="Collapsed">
                             <hc:ComboBox x:Name="RunProfilesComboBox" SelectionChanged="RunProfilesComboBox_SelectionChanged">
@@ -783,38 +788,48 @@
                                 Style="{StaticResource ButtonDashed}" />
                         </hc:FlexPanel>
                     </hc:TransitioningContentControl>
-                    <Button
+                    <cx:DescBtn
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding StopCmd}"
-                        Content="&#xea89;"
-                        FontFamily="{StaticResource Iconfont}"
-                        Style="{StaticResource ButtonDanger}" />
-                    <Button
+                        ButtonCommand="{Binding StopCmd}"
+                        ButtonContent="&#xea89;"
+                        ButtonFontFamily="{StaticResource Iconfont}"
+                        ButtonStyle="{StaticResource ButtonDanger}"
+                        Desc="{DynamicResource Main.ToolBar.Stop}"
+                        DescPosition="Right" />
+                    <cx:DescBtn
                         Margin="2.5,0,2.5,0"
-                        Command="{Binding DebugCmd}"
-                        Content="&#xe606;"
-                        FontFamily="{StaticResource Iconfont}"
-                        Style="{StaticResource ButtonWarning}" />
+                        ButtonCommand="{Binding DebugCmd}"
+                        ButtonContent="&#xe606;"
+                        ButtonFontFamily="{StaticResource Iconfont}"
+                        ButtonStyle="{StaticResource ButtonWarning}"
+                        Desc="{DynamicResource Main.ToolBar.Debug}"
+                        DescPosition="Right" />
                     <hc:TransitioningContentControl TransitionMode="Left2Right">
                         <hc:FlexPanel x:Name="DebugPanel" Visibility="Collapsed">
-                            <Button
+                            <cx:DescBtn
                                 Margin="2.5,0,2.5,0"
-                                Command="{Binding StepInCmd}"
-                                Content="&#xe855;"
-                                FontFamily="{StaticResource Iconfont}"
-                                Style="{StaticResource ButtonDashed}" />
-                            <Button
+                                ButtonCommand="{Binding StepInCmd}"
+                                ButtonContent="&#xe855;"
+                                ButtonFontFamily="{StaticResource Iconfont}"
+                                ButtonStyle="{StaticResource ButtonDashed}"
+                                Desc="{DynamicResource Main.ToolBar.Debug.StepIn}"
+                                DescPosition="Right" />
+                            <cx:DescBtn
                                 Margin="2.5,0,2.5,0"
-                                Command="{Binding StepPassCmd}"
-                                Content="&#xe854;"
-                                FontFamily="{StaticResource Iconfont}"
-                                Style="{StaticResource ButtonDashed}" />
-                            <Button
+                                ButtonCommand="{Binding StepOverCmd}"
+                                ButtonContent="&#xe854;"
+                                ButtonFontFamily="{StaticResource Iconfont}"
+                                ButtonStyle="{StaticResource ButtonDashed}"
+                                Desc="{DynamicResource Main.ToolBar.Debug.StepOver}"
+                                DescPosition="Right" />
+                            <cx:DescBtn
                                 Margin="2.5,0,2.5,0"
-                                Command="{Binding StepOutCmd}"
-                                Content="&#xe853;"
-                                FontFamily="{StaticResource Iconfont}"
-                                Style="{StaticResource ButtonDashed}" />
+                                ButtonCommand="{Binding StepOutCmd}"
+                                ButtonContent="&#xe853;"
+                                ButtonFontFamily="{StaticResource Iconfont}"
+                                ButtonStyle="{StaticResource ButtonDashed}"
+                                Desc="{DynamicResource Main.ToolBar.Debug.StepOut}"
+                                DescPosition="Right" />
                         </hc:FlexPanel>
                     </hc:TransitioningContentControl>
                 </hc:SimpleStackPanel>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable IDE0059 // 不需要赋值
+using System;
 using System.Configuration;
 using System.Windows;
 using Prism.DryIoc;
@@ -15,12 +16,10 @@ using System.Threading;
 using System.Globalization;
 using Microsoft.VisualStudio.Services.Common;
 using RYCBEditorX.Crossing;
-using System.Collections.Specialized;
-using RYCBEditorX.MySQL;
 using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace RYCBEditorX;
-#pragma warning disable IDE0059 // 不需要赋值
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
@@ -34,7 +33,9 @@ public partial class App : PrismApplication
     public const string MINOR_VERSION = "0";
     public const string MICRO_VERSION = "0";
     public const string REVISION_NUMBER = "rc2";
+    public static bool AppInitialized = false;
     public static DateTime BUILD_TIME;
+    public static DispatcherTimer StartupTimer;
     public static LocalizationService LocalizationService
     {
         get; set;
@@ -60,12 +61,23 @@ public partial class App : PrismApplication
     {
         GlobalWindows.ActivatingWindows = [];
         GlobalConfig.LocalizationString = CultureInfo.CurrentCulture.Name;
+        StartupTimer = new DispatcherTimer() { Interval = new TimeSpan(hours: 0, minutes: 1, seconds: 0) };
+        StartupTimer.Tick += (sender, args) =>
+        {
+            StartupTimer.Stop();
+            if (!AppInitialized)
+            {
+                MessageBox.Show("启动时间过长。请检查网络设置。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                Application.Current.Shutdown();
+            }
+        };
+        StartupTimer.Start();
         var t = new Thread(() =>
         {
             splash = new();
             splash.ShowDialog();//不能用Show
-        splash.Dispatcher.Invoke(
-            () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 0));
+            splash.Dispatcher.Invoke(
+                () => splash.LoadingTip.Text = GetLoadingTip(GlobalConfig.LocalizationString, 0));
         });
         t.SetApartmentState(ApartmentState.STA);//设置单线程
         t.Start();
@@ -232,6 +244,7 @@ public partial class App : PrismApplication
     protected override void OnInitialized()
     {
         splash.Dispatcher.Invoke(splash.Close);
+        AppInitialized = true;
         base.OnInitialized();
     }
 

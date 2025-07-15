@@ -15,15 +15,10 @@
             <ColumnDefinition Width="8*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="3.1*" />
+            <RowDefinition Height="3.1*" />
+            <RowDefinition Height="3.1*" />
+            <RowDefinition Height="0.7*" />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
@@ -31,26 +26,56 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Text="Skin" />
-        <ComboBox Grid.Row="0" Grid.Column="1" />
+        <ComboBox
+            x:Name="SkinBox"
+            Grid.Row="0"
+            Grid.Column="1"
+            MaxHeight="40">
+            <ComboBoxItem Content="Dark" />
+            <ComboBoxItem Content="Light" />
+        </ComboBox>
         <TextBlock
             Grid.Row="1"
             Grid.Column="0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Text="Language" />
-        <ComboBox Grid.Row="1" Grid.Column="1" />
+        <ComboBox
+            x:Name="LangBox"
+            Grid.Row="1"
+            Grid.Column="1"
+            MaxHeight="40">
+            <ComboBoxItem Content="English" />
+            <ComboBoxItem Content="简体中文" />
+        </ComboBox>
         <TextBlock
             Grid.Row="2"
             Grid.Column="0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Text="Font" />
-        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="FontBox">
+        <ComboBox
+            x:Name="FontBox"
+            Grid.Row="2"
+            Grid.Column="1"
+            MaxHeight="40">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock FontFamily="{Binding}" Text="{Binding}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        <StackPanel
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="0,0,10,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                x:Name="ConfirmBtn"
+                Margin="10,0,10,0"
+                Content="Confirm" />
+            <Button x:Name="CancelBtn" Content="Cancel" />
+        </StackPanel>
     </Grid>
 </UserControl>

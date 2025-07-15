@@ -24,9 +24,6 @@ using Markdig;
 using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using System.Linq;
-using RYCBEditorX.Utils.Update;
-using HandyControl.Tools.Extension;
-using Microsoft.VisualStudio.Services.Common;
 
 namespace RYCBEditorX.ViewModels;
 public partial class MainWindowViewModel : BindableBase
@@ -113,7 +110,7 @@ public partial class MainWindowViewModel : BindableBase
     {
         get; set;
     }
-    public DelegateCommand StepPassCmd
+    public DelegateCommand StepOverCmd
     {
         get; set;
     }
@@ -130,6 +127,14 @@ public partial class MainWindowViewModel : BindableBase
         get; set;
     }
     public DelegateCommand SettingsCmd
+    {
+        get; set;
+    }
+    public DelegateCommand RestartCmd
+    {
+        get; set;
+    }
+    public DelegateCommand ExitCmd
     {
         get; set;
     }
@@ -158,6 +163,21 @@ public partial class MainWindowViewModel : BindableBase
         ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
         LACCmd = new DelegateCommand(OpenLAC);
         SettingsCmd = new DelegateCommand(OpenSettings);
+        RestartCmd = new DelegateCommand(Restart);
+        ExitCmd = new DelegateCommand(() => {
+            var result = MessageBox.Show("确定要退出程序吗？", "确认",
+                               MessageBoxButton.YesNo,
+                               MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // 先执行清理操作
+                // SaveSettings();
+
+                // 再优雅退出
+                Application.Current.Shutdown();
+            }
+        });
 
         if (GlobalConfig.ShouldAutoSave)
         {
@@ -174,6 +194,34 @@ public partial class MainWindowViewModel : BindableBase
                 Interval = TimeSpan.FromSeconds(GlobalConfig.AutoBackupInterval),
             };
             MainWindow.autoBackupTimer.Tick += SaveFile;
+        }
+    }
+
+    internal void Restart()
+    {
+        try
+        {
+            // 使用独立的重启器进程（避免文件占用问题）
+            var tempBat = Path.Combine(Path.GetTempPath(), "restart.bat");
+            File.WriteAllText(tempBat, $@"
+@echo off
+timeout /t 1 /nobreak >nul
+start """" ""{Environment.ProcessPath}""
+del ""%~f0""");
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = tempBat,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true
+            });
+
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            App.LOGGER.Error(ex);
+            Environment.Exit(0); // 最简化的强制退出
         }
     }
 
@@ -793,7 +841,7 @@ public partial class MainWindowViewModel : BindableBase
         }
         foreach (var item in _templates)
         {
-            completionDatas.Add(new CompletionData(item, CompletionDataType.CodeTemplate, GlobalConfig.CodeTemplates[item]));
+            completionDatas.Add(new CompletionData(item, CompletionDataType.CodeTemplate, GlobalConfig.CodeTemplates[item], GlobalConfig.OnlineWikis.GetIfContains(item)?[0]));
         }
 
         if (completionDatas.Count == 0)

@@ -13,6 +13,7 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:AboutViewModel}"
     FontFamily="{DynamicResource Main}"
     Icon="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
         <FontFamily x:Key="Iconfont">
@@ -31,44 +32,45 @@
             <ColumnDefinition Width="4*" />
             <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
-        <Image Grid.RowSpan="5" Source="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png" />
-        <TextBlock
-            Grid.Column="1"
-            FontSize="50"
-            Style="{StaticResource TextBlockBoldBaseStyle}">
-            RYCB Editor
-        </TextBlock>
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Center"
-            FontSize="30"
-            Style="{StaticResource TextBlockBaseStyle}"
-            Text="{Binding BuildTime}"
-            TextWrapping="WrapWithOverflow" />
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="1"
-            VerticalAlignment="Center"
-            FontSize="30"
-            Style="{StaticResource TextBlockBaseStyle}"
-            Text="{Binding Version}"
-            TextWrapping="WrapWithOverflow" />
-        <TextBox
-            Grid.Row="3"
-            Grid.Column="1"
-            IsReadOnly="True"
-            Text="{DynamicResource Copyright}"
-            TextWrapping="WrapWithOverflow" />
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="1"
-            Margin="20,0,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            FontFamily="{StaticResource Iconfont}"
-            FontSize="30"
-            Text="&#xea0a;" />
+        <hc:TransitioningContentControl Grid.RowSpan="5">
+            <Image Source="/RYCBEditorX;component/Assets/Icon-Ver3.256x.png" />
+        </hc:TransitioningContentControl>
+        <hc:TransitioningContentControl Grid.Column="1">
+            <TextBlock FontSize="50" Style="{StaticResource TextBlockBoldBaseStyle}">
+                RYCB Editor
+            </TextBlock>
+        </hc:TransitioningContentControl>
+        <hc:TransitioningContentControl Grid.Row="1" Grid.Column="1">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="30"
+                Style="{StaticResource TextBlockBaseStyle}"
+                Text="{Binding BuildTime}"
+                TextWrapping="WrapWithOverflow" />
+        </hc:TransitioningContentControl>
+        <hc:TransitioningContentControl Grid.Row="2" Grid.Column="1">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="30"
+                Style="{StaticResource TextBlockBaseStyle}"
+                Text="{Binding Version}"
+                TextWrapping="WrapWithOverflow" />
+        </hc:TransitioningContentControl>
+        <hc:TransitioningContentControl Grid.Row="3" Grid.Column="1">
+            <TextBox
+                IsReadOnly="True"
+                Text="{DynamicResource Copyright}"
+                TextWrapping="WrapWithOverflow" />
+        </hc:TransitioningContentControl>
+        <hc:TransitioningContentControl Grid.Row="4" Grid.Column="1">
+            <TextBlock
+                Margin="20,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource Iconfont}"
+                FontSize="30"
+                Text="&#xea0a;" />
+        </hc:TransitioningContentControl>
         <TextBlock
             Grid.Row="4"
             Grid.Column="1"

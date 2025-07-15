@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using HandyControl.Tools.Extension;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;

@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using HandyControl.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Linq;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Controls;
+using static RYCBEditorX.Utils.Language;
+using System;
 
 namespace RYCBEditorX.Views.SettingsPages;
 /// <summary>
@@ -24,5 +14,22 @@ public partial class Appearance : UserControl
     {
         InitializeComponent();
         FontBox.ItemsSource = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+        FontBox.SelectedValue = new FontFamily(GlobalConfig.Resources["Main"].ToString());
+        for (var i = 0; i < SkinBox.Items.Count; i++)
+        {
+            if ((SkinBox.Items[i] as ComboBoxItem).Content.ToString().Equals(GlobalConfig.Skin, StringComparison.CurrentCultureIgnoreCase))
+            {
+                SkinBox.SelectedIndex = i;
+                break;
+            }
+        }
+        for (var i = 0; i < LangBox.Items.Count; i++)
+        {
+            if ((LangBox.Items[i] as ComboBoxItem).Content.ToString().Equals(Dictionaries.LangDict[GlobalConfig.LocalizationString], StringComparison.CurrentCultureIgnoreCase))
+            {
+                LangBox.SelectedIndex = i;
+                break;
+            }
+        }
     }
 }
