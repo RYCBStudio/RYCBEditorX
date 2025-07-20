@@ -160,7 +160,6 @@ public partial class MainWindowViewModel : BindableBase
         StopCmd = new DelegateCommand(Stop);
         PythonPkgMgmtCmd = new DelegateCommand(PythonPkgMgmt);
         GotoLineCmd = new DelegateCommand(GotoLine);
-        ConfigRunProfilesCmd = new DelegateCommand(ConfigureRunProfiles);
         LACCmd = new DelegateCommand(OpenLAC);
         SettingsCmd = new DelegateCommand(OpenSettings);
         RestartCmd = new DelegateCommand(Restart);
@@ -233,29 +232,6 @@ del ""%~f0""");
     internal void OpenSettings()
     {
         new Settings().ShowDialog();
-    }
-
-    internal void ConfigureRunProfiles()
-    {
-        // 创建一个空列表用于存储ProfileInfo对象
-        List<ProfileInfo> profiles = [];
-        // 创建一个空列表用于存储profile路径
-        List<string> profile_paths = [];
-        // 遍历Profiles\Runners文件夹中的文件
-        foreach (var item in Directory.EnumerateFiles(App.STARTUP_PATH + @"\Profiles\Runners"))
-        {
-            // 将文件名添加到RunProfilesComboBox中
-            MainWindow.Instance.RunProfilesComboBox.Items.Add(Path.GetFileNameWithoutExtension(item));
-            // 将文件名作为Name属性添加到ProfileInfo对象中
-            profiles.Add(new()
-            {
-                Name = Path.GetFileNameWithoutExtension(item)
-            });
-            // 将文件路径添加到profile_paths中
-            profile_paths.Add(item);
-        }
-        // 创建一个RunnerProfileConfig对象，传入profiles和profile_paths
-        new RunnerProfileConfig(profiles, profile_paths).ShowDialog();
     }
 
     internal void Debug()

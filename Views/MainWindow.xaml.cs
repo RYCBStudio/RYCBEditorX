@@ -45,16 +45,12 @@ public partial class MainWindow : Window
         }
         EWResizer.Tick += ResizeEmbeddedWindow;  //绑定事件
         EWResizer.Interval = TimeSpan.FromSeconds(0.1);
-        if (!Utils.Update.CloudSourceConnectionTester.TestConnection())
+        if (!GlobalConfig.NetworkAvaliable)
         {
             NetworkWarningPanel.Visibility = Visibility.Visible;
         }
 #pragma warning disable CA1806 // 不要忽略方法结果
         new LightTip(this);
-        foreach (var item in GlobalConfig.CurrentProfiles)
-        {
-            RunProfilesComboBox.Items.Add(item.Name);
-        }
     }
 
     private void ResizeEmbeddedWindow(object sender, EventArgs e)
@@ -80,39 +76,62 @@ public partial class MainWindow : Window
 
     private void MInfotest_Click(object sender, RoutedEventArgs e)
     {
-        LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["InfoColor"];
-        LightTip.ViewModelInstance.Icon = Icons.INFO;
-        LightTip.ViewModelInstance.Content = "# Test-Info \nThis is a test information.";
-        Notifications.Add(new(Icons.INFO, (Brush)LightTip.Instance.Resources["InfoColor"], LightTip.ViewModelInstance.Content));
-        NotificationsList.Items.Refresh();
-        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
-        LightTip.Instance.Show();
-        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
+        ShowNotification(NotificationType.Info, "Test-Info", "This is a test information.");
     }
 
     private void MWarntest_Click(object sender, RoutedEventArgs e)
     {
-        LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["WarnColor"];
-        LightTip.ViewModelInstance.Icon = Icons.WARN;
-        LightTip.ViewModelInstance.Content = "# Test-Warn \nThis is a test warning.";
-        Notifications.Add(new(Icons.WARN, (Brush)LightTip.Instance.Resources["WarnColor"], LightTip.ViewModelInstance.Content));
-        NotificationsList.Items.Refresh();
-        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
-        LightTip.Instance.Show();
-        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
+        ShowNotification(NotificationType.Warn, "Test-Warn", "This is a test warning.");
     }
 
     private void MErrtest_Click(object sender, RoutedEventArgs e)
     {
-        LightTip.ViewModelInstance.IconBrush = (Brush)LightTip.Instance.Resources["ErrorColor"];
-        LightTip.ViewModelInstance.Icon = Icons.ERROR;
-        LightTip.ViewModelInstance.Content = "# Test-Error \nThis is a test error.";
-        Notifications.Add(new(Icons.ERROR, (Brush)LightTip.Instance.Resources["ErrorColor"], LightTip.ViewModelInstance.Content));
-        NotificationsList.Items.Refresh();
-        GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
-        LightTip.Instance.Show();
-        NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
+        ShowNotification(NotificationType.Error, "Test-Error", "This is a test error.");
     }
+    
+    public void ShowNotification(NotificationType type, string title, string message)
+{
+    // 确定图标和颜色
+    Brush iconBrush;
+    string icon;
+    string resourceKey;
+
+    switch (type)
+    {
+        case NotificationType.Warn:
+            resourceKey = "WarnColor";
+            icon = Icons.WARN;
+            break;
+        case NotificationType.Error:
+            resourceKey = "ErrorColor";
+            icon = Icons.ERROR;
+            break;
+        case NotificationType.Info:
+        default:
+            resourceKey = "InfoColor";
+            icon = Icons.INFO;
+            break;
+    }
+
+    iconBrush = (Brush)LightTip.Instance.Resources[resourceKey];
+    
+    // 设置通知内容
+    var content = $"## {title}\n{message}";
+    
+    // 更新UI
+    LightTip.ViewModelInstance.IconBrush = iconBrush;
+    LightTip.ViewModelInstance.Icon = icon;
+    LightTip.ViewModelInstance.Content = content;
+    
+    // 添加到通知列表
+    Notifications.Add(new(icon, iconBrush, content));
+    NotificationsList.Items.Refresh();
+    
+    // 显示通知
+    GlobalWindows.ActivatingWindows.Add(LightTip.Instance);
+    LightTip.Instance.Show();
+    NotificationBadge.BadgeMargin = new(0, 1, 1, 0);
+}
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
@@ -199,6 +218,11 @@ public partial class MainWindow : Window
         EWResizer.Start();
     }
 
+    private void NotificationsList_Unselected(object sender, RoutedEventArgs e)
+    {
+        BtnClearSelected.Visibility = Visibility.Collapsed;
+    }
+
     private void test_Load(object sender, RoutedEventArgs e)
     {
         new ProgressedInfoTip().Show();
@@ -209,6 +233,7 @@ public partial class MainWindow : Window
         Focus();
         Task.Run(new Action(() =>
         {
+            if (!GlobalConfig.NetworkAvaliable) { return; }
             while (!MySQLModule.ConnectionUtils.ConnectionOpened) ;
             Dispatcher.Invoke(() => UpdateProgress.Maximum = GlobalConfig.TotalLoadedOnline - 1);
             while (GlobalConfig.CurrentLoadedOnlineIndex <= GlobalConfig.TotalLoadedOnline - 1)

@@ -855,7 +855,7 @@
                     FontSize="20"
                     Foreground="{StaticResource WarnColor}"
                     Text="&#xE6D1;" />
-                <TextBlock Text="No network connection." />
+                <TextBlock Style="{StaticResource TextBlockDefaultWarning}" Text="{StaticResource Main.ToolBar.NU}" />
             </DockPanel>
         </ToolBar>
     </Grid>

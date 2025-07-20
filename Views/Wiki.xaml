@@ -2,6 +2,8 @@
     x:Class="RYCBEditorX.Views.Wiki"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:cx="clr-namespace:RYCBEditorX.ControlEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:RYCBEditorX.Views"
@@ -17,20 +19,70 @@
     <UserControl.Resources>
         <FontFamily x:Key="Iconfont">/RYCBEditorX;component/Assets/Fonts/#ali-ifont</FontFamily>
         <FontFamily x:Key="Jbm">/RYCBEditorX;component/Assets/Fonts/#Jetbrains Mono</FontFamily>
+        <Style
+            x:Key="NotificationList"
+            BasedOn="{StaticResource ListBoxBaseStyle}"
+            TargetType="ListBox">
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Triggers>
+                            <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                                <Setter Property="ListBoxItem.Background" Value="#FFC5E0F4" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock x:Name="ThemePlaceHolder" Visibility="Hidden" />
         <Button
             x:Name="LoadBtn"
+            Grid.Row="0"
             Click="Button_Click"
-            IsEnabled="False">
-            Load
-        </Button>
-        <hc:ScrollViewer x:Name="Main" Grid.Row="1">
+            Content="{DynamicResource Main.SideBar.Wiki.ViewCTs}" />
+        <hc:ScrollViewer Grid.Row="1" MaxHeight="300">
+            <ListBox x:Name="CTsLBox" Style="{StaticResource NotificationList}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <mdx:MarkdownViewer Background="Transparent" Markdown="{Binding Name}">
+                                <mdx:MarkdownViewer.Resources>
+                                    <Style TargetType="FlowDocumentScrollViewer">
+                                        <Setter Property="IsToolBarVisible" Value="False" />
+                                    </Style>
+                                </mdx:MarkdownViewer.Resources>
+                            </mdx:MarkdownViewer>
+                            <mdx:MarkdownViewer Background="Transparent" Markdown="{Binding Description}" Grid.Row="1">
+                                <mdx:MarkdownViewer.Resources>
+                                    <Style TargetType="FlowDocumentScrollViewer">
+                                        <Setter Property="IsToolBarVisible" Value="False" />
+                                    </Style>
+                                </mdx:MarkdownViewer.Resources>
+                            </mdx:MarkdownViewer>
+                            <cx:PythonEditor
+                                Grid.Row="2"
+                                Background="Transparent"
+                                IsReadOnly="True"
+                                TextEditorCode="{Binding Template}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </hc:ScrollViewer>
+        <hc:ScrollViewer x:Name="Main" Grid.Row="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />

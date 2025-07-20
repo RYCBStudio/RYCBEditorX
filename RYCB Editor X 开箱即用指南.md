@@ -16,7 +16,7 @@
 
 #### 2.程序运行环境
 
-本软件为Python IDE，您可以使用本软件进行Python代码的编写与运行，但是**运行 ==依靠Python运行时== **。若还未下载，您可以点击[此处](https://www.python.org/downloads/windows/)下载[*Python* **运行时**](https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe)。
+本软件为Python IDE，您可以使用本软件进行Python代码的编写与运行，但是**运行**<b>==依靠Python运行时== </b>。若还未下载，您可以点击[此处](https://www.python.org/downloads/windows/)下载[*Python* **运行时**(直链)](https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe)。
 > 提示：Python官方网站可能因网络原因无法访问。您可以在下面使用我们提供的国内分流镜像源。我们保证提供安全无毒的Python软件。
 >
 > | 镜像名称               | 网站                                                         | 备注                                                         |

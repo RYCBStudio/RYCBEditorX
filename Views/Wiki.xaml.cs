@@ -5,6 +5,8 @@ using RYCBEditorX.Utils;
 using RYCBEditorX.MySQL;
 using System.Windows.Controls.Primitives;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RYCBEditorX.Views;
 /// <summary>
@@ -47,9 +49,6 @@ public partial class Wiki : UserControl
         // 将数据绑定到 ListBox
         CommentsListBox.ItemsSource = comments;
         Loading.Hide();
-        Main.SetValue(Grid.RowSpanProperty, 2);
-        Main.SetValue(Grid.RowProperty, 0);
-        LoadBtn.Hide();
     }
 
     public static string GetAdvancedSearchQuery(
@@ -62,7 +61,13 @@ public partial class Wiki : UserControl
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        LoadData();
+        var _template = GlobalConfig.CodeTemplates;
+        var _templates = new List<CodeTemplate>();
+        foreach (var item in _template)
+        {
+            _templates.Add(CodeTemplate.GetTemplate(item,GlobalConfig.OnlineWikis.GetIfContains(item.Key)?[0]));
+        }
+        CTsLBox.ItemsSource = _templates;
     }
 
     //private void UpdateLikes(object sender, RoutedEventArgs e)
